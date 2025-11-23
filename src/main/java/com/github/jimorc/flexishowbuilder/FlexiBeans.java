@@ -3,7 +3,7 @@ package com.github.jimorc.flexishowbuilder;
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -18,32 +18,19 @@ public class FlexiBeans {
     /**
      * Constructor that takes an InputStream for the CSV data.
      * @param csvInputStream InputStream of CSV data
-     * @throws CSVException if an error occurs during CSV parsing
      */
-    public FlexiBeans(InputStream csvInputStream) throws CSVException {
+    public FlexiBeans(InputStream csvInputStream) {
         Logger.trace("In FlexiBeans constructor(InputStream)");
-        try (InputStreamReader reader = new InputStreamReader(csvInputStream)) {
-            CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
-                    .withType(FlexiBean.class)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
-            beans = csvToBean.parse();
-            Logger.debug("Parsed {} beans from CSV input", beans.size());
-            for (FlexiBean bean : beans) {
-                Logger.trace("{}\n", bean.toString());
-            }
-        } catch (IOException e) {
-            throw new CSVException(BuilderGUI.buildLogMessage(
-                "Error reading CSV input stream:\n", e.toString()));
-        }
+        parseInputStreamReader(new InputStreamReader(csvInputStream));
     }
 
-    /**
+     /**
      * Constructor that takes a File for the CSV data.
      * @param csvF File object for CSV data
      * @throws CSVException if an error occurs during CSV parsing
      * @throws CSVException if the File is null or not a file
-     * @throws CSVException if an IOException occurs during parsing
+     * @throws CSVException if the file is not found. If this happens, there is likely
+     *                      a programming error somewhere else in the code.
      */
     public FlexiBeans(File csvF) throws CSVException {
         Logger.trace("In FlexiBeans constructor(File)");
@@ -59,21 +46,16 @@ public class FlexiBeans {
                 + " which is not a file.\nThis may be a programming error.\n"
                 + "Please report this.");
         }
-        try (InputStreamReader reader = new InputStreamReader(new java.io.FileInputStream(csvF))) {
-            CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
-                    .withType(FlexiBean.class)
-                    .withIgnoreLeadingWhiteSpace(true)
-                    .build();
-            beans = csvToBean.parse();
-            Logger.debug("Parsed {} beans from CSV file {}", beans.size(), csvF.getAbsolutePath());
-            for (FlexiBean bean : beans) {
-                Logger.trace("{}\n", bean.toString());
-            }
-        } catch (IOException e) {
-            throw new CSVException(BuilderGUI.buildLogMessage(
-                "Error parsing CSV file " + csvF.getAbsolutePath() + ":\n", e.toString()));
+        try {
+            InputStreamReader reader = new InputStreamReader(new java.io.FileInputStream(csvF));
+            parseInputStreamReader(reader);
+        } catch (FileNotFoundException e) {
+            Logger.error(e, "FileNotFoundException caught trying to read CSV file ", csvF.getAbsolutePath());
+            throw new CSVException("FileNotFoundException caught trying to read CSV file "
+                + csvF.getAbsolutePath() + "\n" + e.getMessage()
+                + "\nThis may be a programming error. Please report it.");
         }
-    }
+   }
 
     /**
      * Get the list of FlexiBean objects.
@@ -81,5 +63,17 @@ public class FlexiBeans {
      */
     public List<FlexiBean> getBeans() {
         return beans;
+    }
+
+    private void parseInputStreamReader(InputStreamReader reader) {
+        CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
+                .withType(FlexiBean.class)
+                .withIgnoreLeadingWhiteSpace(true)
+                .build();
+        beans = csvToBean.parse();
+        Logger.debug("Parsed {} beans from CSV input", beans.size());
+        for (FlexiBean bean : beans) {
+            Logger.trace("{}\n", bean.toString());
+        }
     }
 }
