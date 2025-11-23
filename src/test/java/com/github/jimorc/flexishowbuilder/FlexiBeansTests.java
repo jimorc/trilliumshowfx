@@ -14,6 +14,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  */
 public class FlexiBeansTests {
     @Test
+    public void testDefaultConstructor() {
+        FlexiBeans flexiBeans = new FlexiBeans();
+        assertEquals(0, flexiBeans.getBeans().size());
+        FlexiBean bean1 = new FlexiBean();
+        bean1.setFilename("test.jpg");
+        flexiBeans.append(bean1);
+        List<FlexiBean> beans = flexiBeans.getBeans();
+        assertEquals(1, beans.size());
+        assertEquals("test.jpg", beans.get(0).getFilename());
+        FlexiBean bean2 = new FlexiBean();
+        bean2.setFilename("example.png");
+        flexiBeans.append(bean2);
+        beans = flexiBeans.getBeans();
+        assertEquals(2, beans.size());
+        assertEquals("example.png", beans.get(1).getFilename());
+    }
+
+    @Test
     public void test5ColumnsInputStreamConstructor() {
         String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
                 + "image1.jpg,An image,John Doe,John,Doe\n"

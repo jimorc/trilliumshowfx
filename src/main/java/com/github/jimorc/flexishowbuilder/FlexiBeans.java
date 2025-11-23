@@ -16,6 +16,14 @@ public class FlexiBeans {
     private List<FlexiBean> beans;
 
     /**
+     * Default constructor.
+     */
+    public FlexiBeans() {
+        Logger.trace("In FlexiBeans default constructor");
+        beans = new java.util.ArrayList<FlexiBean>();
+    }
+
+    /**
      * Constructor that takes an InputStream for the CSV data.
      * @param csvInputStream InputStream of CSV data
      */
@@ -61,6 +69,14 @@ public class FlexiBeans {
      */
     public List<FlexiBean> getBeans() {
         return beans;
+    }
+
+    /**
+     * Append a FlexiBean to the list.
+     * @param bean FlexiBean to append
+     */
+    public void append(FlexiBean bean) {
+        beans.add(bean);
     }
 
     private void parseInputStreamReader(InputStreamReader reader) {
