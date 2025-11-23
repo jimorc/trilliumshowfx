@@ -106,4 +106,28 @@ public class FlexiBeansTests {
         assertEquals("Jane", bean2.getFirstName());
         assertEquals("Smith", bean2.getLastName());
     }
+
+    @Test
+    public void testNullFileConstructor() {
+        File file = null;
+        try {
+            new FlexiBeans(file);
+        } catch (CSVException e) {
+            assertEquals("Trying to read a null CSVFile.\n"
+                + "This may be a programming error.\n"
+                + "Please report this.", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNonExistentFileConstructor() {
+        File file = new File("non_existent_file.csv");
+        try {
+            new FlexiBeans(file);
+        } catch (CSVException e) {
+            assertEquals("Trying to read " + file.getAbsolutePath()
+                + " which is not a file.\nThis may be a programming error.\n"
+                + "Please report this.", e.getMessage());
+        }
+    }
 }

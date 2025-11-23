@@ -50,10 +50,8 @@ public class FlexiBeans {
             InputStreamReader reader = new InputStreamReader(new java.io.FileInputStream(csvF));
             parseInputStreamReader(reader);
         } catch (FileNotFoundException e) {
+            // This should have been caught by the isFile() test above, so we will just log it.
             Logger.error(e, "FileNotFoundException caught trying to read CSV file ", csvF.getAbsolutePath());
-            throw new CSVException("FileNotFoundException caught trying to read CSV file "
-                + csvF.getAbsolutePath() + "\n" + e.getMessage()
-                + "\nThis may be a programming error. Please report it.");
         }
     }
 
