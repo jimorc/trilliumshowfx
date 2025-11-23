@@ -18,7 +18,12 @@ public class FlexiBeansTests {
                 + "image1.jpg,An image,John Doe,John,Doe\n"
                 + "image2.jpg,Another image,Jane Smith,Jane,Smith\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            throw new RuntimeException(e);
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -41,7 +46,12 @@ public class FlexiBeansTests {
                 + "image1.jpg,,An image,John Doe,John,Doe,Data1,Data2\n"
                 + "image2.jpg,Dummy,Another image,Jane Smith,Jane,Smith,Data3,Data4\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            throw new RuntimeException(e);
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -64,7 +74,12 @@ public class FlexiBeansTests {
                 + "image1.jpg,An image\n"
                 + "image2.jpg,Another image\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            throw new RuntimeException(e);
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);

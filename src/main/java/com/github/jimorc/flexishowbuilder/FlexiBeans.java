@@ -18,7 +18,7 @@ public class FlexiBeans {
      * Constructor that takes an InputStream for the CSV data.
      * @param csvInputStream InputStream of CSV data
      */
-    public FlexiBeans(InputStream csvInputStream) {
+    public FlexiBeans(InputStream csvInputStream) throws CSVException {
         Logger.trace("In FlexiBeans constructor(InputStream)");
         try (InputStreamReader reader = new InputStreamReader(csvInputStream)) {
             CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
@@ -31,7 +31,8 @@ public class FlexiBeans {
                 Logger.trace("{}\n", bean.toString());
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error reading CSV input stream", e);
+            throw new CSVException(BuilderGUI.buildLogMessage(
+                "Error reading CSV input stream:\n", e.toString()));
         }
     }
 
