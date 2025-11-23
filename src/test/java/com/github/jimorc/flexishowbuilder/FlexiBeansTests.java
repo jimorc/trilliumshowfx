@@ -21,7 +21,7 @@ public class FlexiBeansTests {
         FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
-        /*FlexiBean bean1 = beans.get(0);
+        FlexiBean bean1 = beans.get(0);
         assertEquals("image1.jpg", bean1.getFilename());
         assertEquals("An image", bean1.getCaption());
         assertEquals("John Doe", bean1.getFullName());
@@ -32,6 +32,6 @@ public class FlexiBeansTests {
         assertEquals("Another image", bean2.getCaption());
         assertEquals("Jane Smith", bean2.getFullName());
         assertEquals("Jane", bean2.getFirstName());
-        assertEquals("Smith", bean2.getLastName());*/
+        assertEquals("Smith", bean2.getLastName());
     }
 }
