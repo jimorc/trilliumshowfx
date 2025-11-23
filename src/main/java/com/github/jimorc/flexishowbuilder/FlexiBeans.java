@@ -24,7 +24,7 @@ public class FlexiBeans {
         parseInputStreamReader(new InputStreamReader(csvInputStream));
     }
 
-     /**
+    /**
      * Constructor that takes a File for the CSV data.
      * @param csvF File object for CSV data
      * @throws CSVException if an error occurs during CSV parsing
@@ -55,7 +55,7 @@ public class FlexiBeans {
                 + csvF.getAbsolutePath() + "\n" + e.getMessage()
                 + "\nThis may be a programming error. Please report it.");
         }
-   }
+    }
 
     /**
      * Get the list of FlexiBean objects.

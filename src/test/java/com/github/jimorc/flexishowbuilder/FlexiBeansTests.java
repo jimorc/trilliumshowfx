@@ -43,7 +43,7 @@ public class FlexiBeansTests {
                 + "image2.jpg,Dummy,Another image,Jane Smith,Jane,Smith,Data3,Data4\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
         FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
-         List<FlexiBean> beans = flexiBeans.getBeans();
+        List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
         assertEquals("image1.jpg", bean1.getFilename());
@@ -95,7 +95,7 @@ public class FlexiBeansTests {
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
         assertEquals("image1.jpg", bean1.getFilename());
-//        assertEquals("Image One", bean1.getCaption());
+        assertEquals("Image One", bean1.getTitle());
         assertEquals("John Doe", bean1.getFullName());
         assertEquals("John", bean1.getFirstName());
         assertEquals("Doe", bean1.getLastName());
