@@ -9,8 +9,8 @@ public class FlexiBean {
     @CsvBindByName(column = "Filename", required = true)
     private String filename;
 
-    @CsvBindByName(column = "Caption", required = false)
-    private String caption;
+    @CsvBindByName(column = "Title", required = false)
+    private String title;
 
     @CsvBindByName(column = "Full Name", required = false)
     private String fullName;
@@ -30,11 +30,11 @@ public class FlexiBean {
     }
 
     /**
-     * Get caption.
-     * @return caption
+     * Get title.
+     * @return title
      */
-    public String getCaption() {
-        return caption;
+    public String getTitle() {
+        return title;
     }
 
     /**
@@ -70,11 +70,11 @@ public class FlexiBean {
     }
 
     /**
-     * Set caption.
-     * @param caption
+     * Set title.
+     * @param title to set
      */
-    public void setCaption(String caption) {
-        this.caption = caption;
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     /**
@@ -110,7 +110,7 @@ public class FlexiBean {
         StringBuffer sb = new StringBuffer();
         sb.append(filename);
         sb.append(",");
-        sb.append(caption);
+        sb.append(title);
         sb.append(",");
         sb.append(fullName);
         sb.append(",");
