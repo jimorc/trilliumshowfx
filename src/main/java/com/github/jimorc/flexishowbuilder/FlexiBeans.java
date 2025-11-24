@@ -24,7 +24,7 @@ public class FlexiBeans {
     public FlexiBeans() {
         Logger.trace("In FlexiBeans default constructor");
         beans = new java.util.ArrayList<FlexiBean>();
-    }   
+    }
 
     /**
      * Constructor that takes an InputStream for the CSV data.
@@ -82,7 +82,6 @@ public class FlexiBeans {
         beans.add(bean);
     }
 
-
     /**
      * Sort the FlexiBean objects according to the specified SortOrder.
      * @param order SortOrder to use for sorting
@@ -102,23 +101,31 @@ public class FlexiBeans {
             default:
                 Logger.error("Sort order ", order.toString(), " not yet implemented.");
                 throw new UnsupportedOperationException("Sort order " + order.toString() + " not yet implemented.");
-        };
+        }
     }
 
-    private void parseInputStreamReader(InputStreamReader reader) 
+    // Need to suppress checkstyle IllegalCatch here because
+    // openCSV CsvToBean.parse() may throw RuntimeException.
+    // We need to catch that and re-throw as CSVException or BadHeaderException.
+    @SuppressWarnings("checkstyle:IllegalCatch")
+    private void parseInputStreamReader(InputStreamReader reader)
             throws BadHeaderException, CSVException {
         CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
                 .withType(FlexiBean.class)
                 .withIgnoreLeadingWhiteSpace(true)
                 .build();
+        // openCSV parse() may throw RuntimeException. We need to catch it
+        // and re-throw as our own exception.
         try {
             beans = csvToBean.parse();
         } catch (RuntimeException e) {
-            Logger.error(e, "RuntimeException caught during CSV parsing");
-            if (e.getMessage().contains("Error capturing CSV header!")) {
-                throw new BadHeaderException(e.getMessage());
-            }   
-            throw new CSVException("Error parsing CSV input: " + e.getMessage());
+            if (e instanceof RuntimeException) {
+                Logger.error(e, "RuntimeException caught during CSV parsing");
+                if (e.getMessage().contains("Error capturing CSV header!")) {
+                    throw new BadHeaderException(e.getMessage());
+                }
+                throw new CSVException("Error parsing CSV input: " + e.getMessage());
+            }
         }
         Logger.debug("Parsed {} beans from CSV input", beans.size());
         for (FlexiBean bean : beans) {

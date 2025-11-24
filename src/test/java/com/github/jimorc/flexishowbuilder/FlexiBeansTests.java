@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
@@ -131,9 +131,9 @@ public class FlexiBeansTests {
             flexiBeans = new FlexiBeans(file);
         } catch (CSVException e) {
             throw new RuntimeException(e);
-       } catch (BadHeaderException e) {
+        } catch (BadHeaderException e) {
             fail("BadHeaderException thrown: " + e.getMessage());
-       }
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -159,9 +159,9 @@ public class FlexiBeansTests {
             assertEquals("Trying to read a null CSVFile.\n"
                 + "This may be a programming error.\n"
                 + "Please report this.", e.getMessage());
-       } catch (BadHeaderException e) {
+        } catch (BadHeaderException e) {
             fail("BadHeaderException thrown: " + e.getMessage());
-       }
+        }
     }
 
     @Test
@@ -192,6 +192,14 @@ public class FlexiBeansTests {
 
     @Test
     public void testSortAsIs() {
+        // first test sorting with SortOrder.AsIs
+        final int doe1 = 0;
+        // second test sorting with SortOrder.AsIs
+        final int doe2 = 1;
+        // third test sorting with SortOrder.AsIs
+        final int smith1 = 2;
+        // fourth test sorting with SortOrder.AsIs
+        final int smith2 = 3;
         String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
                 + "image1.jpg,An image,John Doe,John,Doe\n"
                 + "image2.jpg,Another image,Jane Smith,Jane,Smith\n"
@@ -203,15 +211,15 @@ public class FlexiBeansTests {
             flexiBeans = new FlexiBeans(csvInputStream);
         } catch (CSVException e) {
             fail("CSVException thrown: " + e.getMessage());
-       } catch (BadHeaderException e) {
+        } catch (BadHeaderException e) {
             fail("BadHeaderException thrown: " + e.getMessage());
-       }
+        }
         flexiBeans.sort(SortOrder.AsIs);
         List<FlexiBean> beans = flexiBeans.getBeans();
-        assertEquals(4, beans.size());
-        assertEquals("image1.jpg", beans.get(0).getFilename());
-        assertEquals("image3.jpg", beans.get(1).getFilename());
-        assertEquals("image2.jpg", beans.get(2).getFilename());
-        assertEquals("image4.jpg", beans.get(3).getFilename());
+        assertEquals(smith2 + 1, beans.size());
+        assertEquals("image1.jpg", beans.get(doe1).getFilename());
+        assertEquals("image3.jpg", beans.get(doe2).getFilename());
+        assertEquals("image2.jpg", beans.get(smith1).getFilename());
+        assertEquals("image4.jpg", beans.get(smith2).getFilename());
     }
 }
