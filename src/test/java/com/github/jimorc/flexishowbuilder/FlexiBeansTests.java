@@ -359,4 +359,45 @@ public class FlexiBeansTests {
         assertEquals("image5.jpg", beans.get(aliceDoe).getFilename());
         assertEquals("image6.jpg", beans.get(bobSmith).getFilename());
     }
+
+    @Test
+    public void testSortAlphabeticallyByLastNameFirstNameReverse() {
+        // first test sorting with SortOrder.AlphabeticallyByLastNameFirstNameReverse
+        final int doe1 = 3;
+        // second test sorting with SortOrder.AlphabeticallyByLastNameFirstNameReverse
+        final int doe2 = 4;
+        // third test sorting with SortOrder.AlphabeticallyByLastNameFirstNameReverse
+        final int smith1 = 0;
+        // fourth test sorting with SortOrder.AlphabeticallyByLastNameFirstNameReverse
+        final int smith2 = 1;
+        // fifth test sorting with SortOrder.AlphabeticallyByLastNameFirstNameReverse
+        final int aliceDoe = 5;
+        // sixth test sorting with SortOrder.AlphabeticallyByLastNameFirstNameReverse
+        final int bobSmith = 2;
+        String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
+                + "image1.jpg,An image,John Doe,John,Doe\n"
+                + "image2.jpg,Another image,Jane Smith,Jane,Smith\n"
+                + "image3.jpg,Third image,John Doe,John,Doe\n"
+                + "image4.jpg,Fourth image,Jane Smith,Jane,Smith\n"
+                + "image5.jpg,Fifth image,Alice Doe,Alice,Doe\n"
+                + "image6.jpg,Sixth image,Bob Smith,Bob,Smith\n";
+        InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
+        flexiBeans.sort(SortOrder.AlphabeticalByLastNameThenFirstNameReverse);
+        List<FlexiBean> beans = flexiBeans.getBeans();
+        assertEquals(aliceDoe + 1, beans.size());
+        assertEquals("image2.jpg", beans.get(smith1).getFilename());
+        assertEquals("image4.jpg", beans.get(smith2).getFilename());
+        assertEquals("image1.jpg", beans.get(doe1).getFilename());
+        assertEquals("image3.jpg", beans.get(doe2).getFilename());
+        assertEquals("image5.jpg", beans.get(aliceDoe).getFilename());
+        assertEquals("image6.jpg", beans.get(bobSmith).getFilename());
+    }
 }

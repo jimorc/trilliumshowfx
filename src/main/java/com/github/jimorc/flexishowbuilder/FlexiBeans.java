@@ -88,31 +88,18 @@ public class FlexiBeans {
      */
     public void sort(SortOrder order) {
         Map<String, FlexiBeans> beanMap = generateBeanMap();
-        List<String> fullNames = fullNamesAsIsOrder();
-        List<FlexiBean> sortedBeans = new ArrayList<FlexiBean>();
+        List<String> fullNames = generateFullNamesList();
         switch (order) {
             case AsIs:
-                for (String fullName : fullNames) {
-                    FlexiBeans flexiBeans = beanMap.get(fullName);
-                    sortedBeans.addAll(flexiBeans.getBeans());
-                }
-                beans = sortedBeans;
+                sortBeans(beanMap, fullNames);
                 break;
             case AlphabeticalByFullName:
                 fullNames.sort(String::compareToIgnoreCase);
-                for (String fullName : fullNames) {
-                    FlexiBeans flexiBeans = beanMap.get(fullName);
-                    sortedBeans.addAll(flexiBeans.getBeans());
-                }
-                beans = sortedBeans;
+                sortBeans(beanMap, fullNames);
                 break;
             case AlphabeticalByFullNameReverse:
                 fullNames.sort((a, b) -> b.compareToIgnoreCase(a));
-                for (String fullName : fullNames) {
-                    FlexiBeans flexiBeans = beanMap.get(fullName);
-                    sortedBeans.addAll(flexiBeans.getBeans());
-                }
-                beans = sortedBeans;
+                sortBeans(beanMap, fullNames);
                 break;
             case AlphabeticalByLastNameThenFirstName:
                 fullNames.sort((a, b) -> {
@@ -127,16 +114,36 @@ public class FlexiBeans {
                         return a.compareToIgnoreCase(b);
                     }
                 });
-                for (String fullName : fullNames) {
-                    FlexiBeans flexiBeans = beanMap.get(fullName);
-                    sortedBeans.addAll(flexiBeans.getBeans());
-                }
-                beans = sortedBeans;
+                sortBeans(beanMap, fullNames);
+                break;
+            case AlphabeticalByLastNameThenFirstNameReverse:
+                fullNames.sort((a, b) -> {
+                    String[] aParts = a.split(" ");
+                    String[] bParts = b.split(" ");
+                    String aLastName = aParts[aParts.length - 1];
+                    String bLastName = bParts[bParts.length - 1];
+                    int lastNameCompare = bLastName.compareToIgnoreCase(aLastName);
+                    if (lastNameCompare != 0) {
+                        return lastNameCompare;
+                    } else {
+                        return b.compareToIgnoreCase(a);
+                    }
+                });
+                sortBeans(beanMap, fullNames);
                 break;
             default:
                 Logger.error("Sort order ", order.toString(), " not yet implemented.");
                 throw new UnsupportedOperationException("Sort order " + order.toString() + " not yet implemented.");
         }
+    }
+
+    private void sortBeans(Map<String, FlexiBeans> beanMap, List<String> fullNames) {
+        List<FlexiBean> sortedBeans = new ArrayList<FlexiBean>();
+        for (String fullName : fullNames) {
+            FlexiBeans flexiBeans = beanMap.get(fullName);
+            sortedBeans.addAll(flexiBeans.getBeans());
+        }
+        beans = sortedBeans;
     }
 
     // Need to suppress checkstyle IllegalCatch here because
@@ -177,7 +184,7 @@ public class FlexiBeans {
         return beanMap;
     }
 
-    private List<String> fullNamesAsIsOrder() {
+    private List<String> generateFullNamesList() {
         List<String> fullNames = new ArrayList<String>();
         for (FlexiBean bean : beans) {
             if (!fullNames.contains(bean.getFullName())) {
