@@ -218,7 +218,7 @@ public class FlexiBeansTests {
         assertEquals("Jane Smith", bean2.getFullName());
         assertEquals("Jane", bean2.getFirstName());
         assertEquals("Smith", bean2.getLastName());
-    }   
+    }
 
     @Test
     public void testSortAsIs() {
@@ -251,5 +251,38 @@ public class FlexiBeansTests {
         assertEquals("image3.jpg", beans.get(doe2).getFilename());
         assertEquals("image2.jpg", beans.get(smith1).getFilename());
         assertEquals("image4.jpg", beans.get(smith2).getFilename());
+    }
+
+    @Test
+    public void testSortAlphabeticallyByFullName() {
+        // first test sorting with SortOrder.AlphabeticallyByFullName
+        final int doe1 = 2;
+        // second test sorting with SortOrder.AlphabeticallyByFullName
+        final int doe2 = 3;
+        // third test sorting with SortOrder.AlphabeticallyByFullName
+        final int smith1 = 0;
+        // fourth test sorting with SortOrder.AlphabeticallyByFullName
+        final int smith2 = 1;
+        String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
+                + "image1.jpg,An image,John Doe,John,Doe\n"
+                + "image2.jpg,Another image,Jane Smith,Jane,Smith\n"
+                + "image3.jpg,Third image,John Doe,John,Doe\n"
+                + "image4.jpg,Fourth image,Jane Smith,Jane,Smith\n";
+        InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
+        flexiBeans.sort(SortOrder.AlphabeticalByFullName);
+        List<FlexiBean> beans = flexiBeans.getBeans();
+        assertEquals(doe2 + 1, beans.size());
+        assertEquals("image2.jpg", beans.get(smith1).getFilename());
+        assertEquals("image4.jpg", beans.get(smith2).getFilename());
+        assertEquals("image1.jpg", beans.get(doe1).getFilename());
+        assertEquals("image3.jpg", beans.get(doe2).getFilename());
     }
 }

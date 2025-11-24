@@ -98,6 +98,15 @@ public class FlexiBeans {
                 }
                 beans = sortedBeans;
                 break;
+            case AlphabeticalByFullName:
+                fullNames.sort(String::compareToIgnoreCase);
+                for (String fullName : fullNames) {
+                    System.out.printf("Sorted full name: {}\n", fullName);
+                    FlexiBeans flexiBeans = beanMap.get(fullName);
+                    sortedBeans.addAll(flexiBeans.getBeans());
+                }
+                beans = sortedBeans;
+                break;
             default:
                 Logger.error("Sort order ", order.toString(), " not yet implemented.");
                 throw new UnsupportedOperationException("Sort order " + order.toString() + " not yet implemented.");
