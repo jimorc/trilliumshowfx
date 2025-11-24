@@ -6,7 +6,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.tinylog.Logger;
 
 /**
@@ -21,7 +24,7 @@ public class FlexiBeans {
     public FlexiBeans() {
         Logger.trace("In FlexiBeans default constructor");
         beans = new java.util.ArrayList<FlexiBean>();
-    }
+    }   
 
     /**
      * Constructor that takes an InputStream for the CSV data.
@@ -79,6 +82,29 @@ public class FlexiBeans {
         beans.add(bean);
     }
 
+
+    /**
+     * Sort the FlexiBean objects according to the specified SortOrder.
+     * @param order SortOrder to use for sorting
+     */
+    public void sort(SortOrder order) {
+        Map<String, FlexiBeans> beanMap = generateBeanMap();
+        List<String> fullNames = fullNamesAsIsOrder();
+        List<FlexiBean> sortedBeans = new ArrayList<FlexiBean>();
+        switch (order) {
+            case AsIs:
+                for (String fullName : fullNames) {
+                    FlexiBeans flexiBeans = beanMap.get(fullName);
+                    sortedBeans.addAll(flexiBeans.getBeans());
+                }
+                beans = sortedBeans;
+                break;
+            default:
+                Logger.error("Sort order ", order.toString(), " not yet implemented.");
+                throw new UnsupportedOperationException("Sort order " + order.toString() + " not yet implemented.");
+        };
+    }
+
     private void parseInputStreamReader(InputStreamReader reader) {
         CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
                 .withType(FlexiBean.class)
@@ -89,5 +115,24 @@ public class FlexiBeans {
         for (FlexiBean bean : beans) {
             Logger.trace("{}\n", bean.toString());
         }
+    }
+
+    private Map<String, FlexiBeans> generateBeanMap() {
+        Map<String, FlexiBeans> beanMap = new HashMap<>();
+        for (FlexiBean bean : beans) {
+            beanMap.putIfAbsent(bean.getFullName(), new FlexiBeans());
+            beanMap.get(bean.getFullName()).append(bean);
+        }
+        return beanMap;
+    }
+
+    private List<String> fullNamesAsIsOrder() {
+        List<String> fullNames = new ArrayList<String>();
+        for (FlexiBean bean : beans) {
+            if (!fullNames.contains(bean.getFullName())) {
+                fullNames.add(bean.getFullName());
+            }
+        }
+        return fullNames;
     }
 }

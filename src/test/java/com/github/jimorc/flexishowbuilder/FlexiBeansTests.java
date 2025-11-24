@@ -148,4 +148,22 @@ public class FlexiBeansTests {
                 + "Please report this.", e.getMessage());
         }
     }
+
+    @Test
+    public void testSortAsIs() {
+        String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
+                + "image1.jpg,An image,John Doe,John,Doe\n"
+                + "image2.jpg,Another image,Jane Smith,Jane,Smith\n"
+                + "image3.jpg,Third image,John Doe,John,Doe\n"
+                + "image4.jpg,Fourth image,Jane Smith,Jane,Smith\n";
+        InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
+        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        flexiBeans.sort(SortOrder.AsIs);
+        List<FlexiBean> beans = flexiBeans.getBeans();
+        assertEquals(4, beans.size());
+        assertEquals("image1.jpg", beans.get(0).getFilename());
+        assertEquals("image3.jpg", beans.get(1).getFilename());
+        assertEquals("image2.jpg", beans.get(2).getFilename());
+        assertEquals("image4.jpg", beans.get(3).getFilename());
+    }
 }
