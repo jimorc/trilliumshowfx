@@ -285,4 +285,37 @@ public class FlexiBeansTests {
         assertEquals("image1.jpg", beans.get(doe1).getFilename());
         assertEquals("image3.jpg", beans.get(doe2).getFilename());
     }
+
+    @Test
+    public void testSortAlphabeticallyByFullNameReverse() {
+        // first test sorting with SortOrder.AlphabeticallyByFullName
+        final int doe1 = 0;
+        // second test sorting with SortOrder.AlphabeticallyByFullName
+        final int doe2 = 1;
+        // third test sorting with SortOrder.AlphabeticallyByFullName
+        final int smith1 = 2;
+        // fourth test sorting with SortOrder.AlphabeticallyByFullName
+        final int smith2 = 3;
+        String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
+                + "image1.jpg,An image,John Doe,John,Doe\n"
+                + "image2.jpg,Another image,Jane Smith,Jane,Smith\n"
+                + "image3.jpg,Third image,John Doe,John,Doe\n"
+                + "image4.jpg,Fourth image,Jane Smith,Jane,Smith\n";
+        InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
+        flexiBeans.sort(SortOrder.AlphabeticalByFullNameReverse);
+        List<FlexiBean> beans = flexiBeans.getBeans();
+        assertEquals(smith2 + 1, beans.size());
+        assertEquals("image2.jpg", beans.get(smith1).getFilename());
+        assertEquals("image4.jpg", beans.get(smith2).getFilename());
+        assertEquals("image1.jpg", beans.get(doe1).getFilename());
+        assertEquals("image3.jpg", beans.get(doe2).getFilename());
+    }
 }

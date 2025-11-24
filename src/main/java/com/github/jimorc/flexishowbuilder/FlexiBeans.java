@@ -101,7 +101,14 @@ public class FlexiBeans {
             case AlphabeticalByFullName:
                 fullNames.sort(String::compareToIgnoreCase);
                 for (String fullName : fullNames) {
-                    System.out.printf("Sorted full name: {}\n", fullName);
+                    FlexiBeans flexiBeans = beanMap.get(fullName);
+                    sortedBeans.addAll(flexiBeans.getBeans());
+                }
+                beans = sortedBeans;
+                break;
+            case AlphabeticalByFullNameReverse:
+                fullNames.sort((a, b) -> b.compareToIgnoreCase(a));
+                for (String fullName : fullNames) {
                     FlexiBeans flexiBeans = beanMap.get(fullName);
                     sortedBeans.addAll(flexiBeans.getBeans());
                 }
