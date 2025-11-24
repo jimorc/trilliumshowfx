@@ -114,6 +114,25 @@ public class FlexiBeans {
                 }
                 beans = sortedBeans;
                 break;
+            case AlphabeticalByLastNameThenFirstName:
+                fullNames.sort((a, b) -> {
+                    String[] aParts = a.split(" ");
+                    String[] bParts = b.split(" ");
+                    String aLastName = aParts[aParts.length - 1];
+                    String bLastName = bParts[bParts.length - 1];
+                    int lastNameCompare = aLastName.compareToIgnoreCase(bLastName);
+                    if (lastNameCompare != 0) {
+                        return lastNameCompare;
+                    } else {
+                        return a.compareToIgnoreCase(b);
+                    }
+                });
+                for (String fullName : fullNames) {
+                    FlexiBeans flexiBeans = beanMap.get(fullName);
+                    sortedBeans.addAll(flexiBeans.getBeans());
+                }
+                beans = sortedBeans;
+                break;
             default:
                 Logger.error("Sort order ", order.toString(), " not yet implemented.");
                 throw new UnsupportedOperationException("Sort order " + order.toString() + " not yet implemented.");
