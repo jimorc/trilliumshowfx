@@ -30,7 +30,7 @@ public class FlexiBeans {
      * Constructor that takes an InputStream for the CSV data.
      * @param csvInputStream InputStream of CSV data
      */
-    public FlexiBeans(InputStream csvInputStream) {
+    public FlexiBeans(InputStream csvInputStream) throws BadHeaderException, CSVException {
         Logger.trace("In FlexiBeans constructor(InputStream)");
         parseInputStreamReader(new InputStreamReader(csvInputStream));
     }
@@ -43,7 +43,7 @@ public class FlexiBeans {
      * @throws CSVException if the file is not found. If this happens, there is likely
      *                      a programming error somewhere else in the code.
      */
-    public FlexiBeans(File csvF) throws CSVException {
+    public FlexiBeans(File csvF) throws BadHeaderException, CSVException {
         Logger.trace("In FlexiBeans constructor(File)");
         if (csvF == null) {
             Logger.error("FlexiBeans constructor was passed a null CSV file object");
@@ -105,12 +105,21 @@ public class FlexiBeans {
         };
     }
 
-    private void parseInputStreamReader(InputStreamReader reader) {
+    private void parseInputStreamReader(InputStreamReader reader) 
+            throws BadHeaderException, CSVException {
         CsvToBean<FlexiBean> csvToBean = new CsvToBeanBuilder<FlexiBean>(reader)
                 .withType(FlexiBean.class)
                 .withIgnoreLeadingWhiteSpace(true)
                 .build();
-        beans = csvToBean.parse();
+        try {
+            beans = csvToBean.parse();
+        } catch (RuntimeException e) {
+            Logger.error(e, "RuntimeException caught during CSV parsing");
+            if (e.getMessage().contains("Error capturing CSV header!")) {
+                throw new BadHeaderException(e.getMessage());
+            }   
+            throw new CSVException("Error parsing CSV input: " + e.getMessage());
+        }
         Logger.debug("Parsed {} beans from CSV input", beans.size());
         for (FlexiBean bean : beans) {
             Logger.trace("{}\n", bean.toString());

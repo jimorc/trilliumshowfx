@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * FlexiBeansTests contains tests for the FlexiBeans class.
@@ -37,7 +39,14 @@ public class FlexiBeansTests {
                 + "image1.jpg,An image,John Doe,John,Doe\n"
                 + "image2.jpg,Another image,Jane Smith,Jane,Smith\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -60,7 +69,14 @@ public class FlexiBeansTests {
                 + "image1.jpg,,An image,John Doe,John,Doe,Data1,Data2\n"
                 + "image2.jpg,Dummy,Another image,Jane Smith,Jane,Smith,Data3,Data4\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -83,7 +99,14 @@ public class FlexiBeansTests {
                 + "image1.jpg,An image\n"
                 + "image2.jpg,Another image\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -108,7 +131,9 @@ public class FlexiBeansTests {
             flexiBeans = new FlexiBeans(file);
         } catch (CSVException e) {
             throw new RuntimeException(e);
-        }
+       } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+       }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
         FlexiBean bean1 = beans.get(0);
@@ -134,7 +159,9 @@ public class FlexiBeansTests {
             assertEquals("Trying to read a null CSVFile.\n"
                 + "This may be a programming error.\n"
                 + "Please report this.", e.getMessage());
-        }
+       } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+       }
     }
 
     @Test
@@ -146,7 +173,21 @@ public class FlexiBeansTests {
             assertEquals("Trying to read " + file.getAbsolutePath()
                 + " which is not a file.\nThis may be a programming error.\n"
                 + "Please report this.", e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
         }
+    }
+
+    @Test
+    public void testEmptyInputStreamConstructor() {
+        String csvData = "";
+        InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
+        Class<? extends Exception> expectedExceptionType = BadHeaderException.class;
+        Exception actualException = Assertions.assertThrows(expectedExceptionType, () -> {
+            // This should throw a BadHeaderException complaining about missing headers.
+            new FlexiBeans(csvInputStream);
+        });
+        assertEquals("Error capturing CSV header!", actualException.getMessage());
     }
 
     @Test
@@ -157,7 +198,14 @@ public class FlexiBeansTests {
                 + "image3.jpg,Third image,John Doe,John,Doe\n"
                 + "image4.jpg,Fourth image,Jane Smith,Jane,Smith\n";
         InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
-        FlexiBeans flexiBeans = new FlexiBeans(csvInputStream);
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+       } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+       }
         flexiBeans.sort(SortOrder.AsIs);
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(4, beans.size());
