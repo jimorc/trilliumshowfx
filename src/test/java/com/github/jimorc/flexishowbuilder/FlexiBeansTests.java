@@ -191,6 +191,36 @@ public class FlexiBeansTests {
     }
 
     @Test
+    public void testNewlineInputStreamConstructor() {
+        String csvData = "Filename,Title,Full Name,First Name,Last Name\n"
+                + "image1.jpg,An image,John Doe,John,Doe\n"
+                + "image2.jpg,\"Another image\n\",Jane Smith,Jane,Smith\n";
+        InputStream csvInputStream = new ByteArrayInputStream(csvData.getBytes(StandardCharsets.UTF_8));
+        FlexiBeans flexiBeans = null;
+        try {
+            flexiBeans = new FlexiBeans(csvInputStream);
+        } catch (CSVException e) {
+            fail("CSVException thrown: " + e.getMessage());
+        } catch (BadHeaderException e) {
+            fail("BadHeaderException thrown: " + e.getMessage());
+        }
+        List<FlexiBean> beans = flexiBeans.getBeans();
+        assertEquals(2, beans.size());
+        FlexiBean bean1 = beans.get(0);
+        assertEquals("image1.jpg", bean1.getFilename());
+        assertEquals("An image", bean1.getTitle());
+        assertEquals("John Doe", bean1.getFullName());
+        assertEquals("John", bean1.getFirstName());
+        assertEquals("Doe", bean1.getLastName());
+        FlexiBean bean2 = beans.get(1);
+        assertEquals("image2.jpg", bean2.getFilename());
+        assertEquals("Another image\n", bean2.getTitle());
+        assertEquals("Jane Smith", bean2.getFullName());
+        assertEquals("Jane", bean2.getFirstName());
+        assertEquals("Smith", bean2.getLastName());
+    }   
+
+    @Test
     public void testSortAsIs() {
         // first test sorting with SortOrder.AsIs
         final int doe1 = 0;
