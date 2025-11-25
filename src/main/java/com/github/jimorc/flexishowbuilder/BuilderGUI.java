@@ -111,7 +111,7 @@ public class BuilderGUI extends Application {
             TitleImage.generateTitleImage(data.getTitle(), titleFileName);
             out.appendLine(new TitleImageLine("title.jpg"));
 
-            csv.sortNames(data.getOrder());
+            csv.getBeans().sort(data.getOrder());
             ArrayList<String> fullNames = csv.getSortedFullNames();
             for (String name : fullNames) {
                 Person person = csv.getPerson(name);
