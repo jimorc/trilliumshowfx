@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import org.tinylog.Logger;
 
 /**
@@ -22,7 +21,6 @@ public final class InputCSV {
     private File csvFile;
     private FlexiBeans flexiBeans;
     private Map<String, FlexiBeans> fullNameMap;
-    private Set<String> fullNameKeys;
     private ArrayList<String> sortedFullNames;
 
     /** This constructor parses the specified CSV file and builds an InputCSV
@@ -91,14 +89,6 @@ public final class InputCSV {
      */
     protected Map<String, FlexiBeans> getHashMap() {
         return fullNameMap;
-    }
-
-    /**
-     * Retrieve the Set of name keys. This method is provided only for test purposes.
-     * @return the Set of name keys
-     */
-    protected Set<String> getFullNameKeys() {
-        return fullNameKeys;
     }
 
     /**
