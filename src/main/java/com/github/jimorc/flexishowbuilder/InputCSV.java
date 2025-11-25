@@ -21,7 +21,6 @@ import org.tinylog.Logger;
 public final class InputCSV {
     private File csvFile;
     private FlexiBeans flexiBeans;
-    private CSVLine[] lines = new CSVLine[0];
     private Map<String, FlexiBeans> fullNameMap;
     private Set<String> fullNameKeys;
     private ArrayList<String> sortedFullNames;
@@ -227,17 +226,17 @@ public final class InputCSV {
     }
 
     /**
-     * Retrieve the input CSV line corresponding to the specified index.
-     * @param index The number of the line to retrieve
-     * @return the line specified by index
+     * Retrieve the input FlexiBean corresponding to the specified index.
+     * @param index The number of the FlexiBean to retrieve
+     * @return the FlexiBean specified by index
      */
-    public CSVLine getLine(int index) {
-        if (index < 0 || index >= lines.length) {
+    public FlexiBean getBean(int index) {
+        if (index < 0 || index >= flexiBeans.getBeans().size()) {
             Logger.error(BuilderGUI.buildLogMessage(
                 "Invalid index in InputCSV.getLine: ", Integer.toString(index)));
             throw new ArrayIndexOutOfBoundsException("Index out of bounds: " + index);
         }
-        return lines[index];
+        return flexiBeans.getBeans().get(index);
     }
 
     /**
@@ -284,9 +283,8 @@ public final class InputCSV {
     private List<String> getListOfMissingImages() {
         ArrayList<String> missingImages = new ArrayList<>();
         String dir = getFileDir();
-        for (int i = 1; i < lines.length; i++) { // skip header line
-            ImageAndPersonLine ipLine = (ImageAndPersonLine) lines[i];
-            String imageFileName = ipLine.getImageFileName();
+        for (FlexiBean bean : flexiBeans.getBeans()) {
+            String imageFileName = bean.getFilename();
             java.nio.file.Path imagePath = java.nio.file.Paths.get(dir, imageFileName);
             File imageFile = imagePath.toFile();
             if (!imageFile.isFile()) {
@@ -300,31 +298,12 @@ public final class InputCSV {
 
     /**
      * validateCSVFile validates the contents of the InputCSV file.
-     * @return
+     * @return Exception if there is an error found, null otherwise.
      * @throws CSVException
      */
-    protected Exception validateCSVFile() throws CSVException {
-        final int headerLineSize = 5;
-        final int fileNameLine = 0;
-        final int titleLine = 1;
-        final int fullNameLine = 2;
-        final int firstNameLine = 3;
-        final int lastNameLine = 4;
-        if (lines.length == 0) {
+    public Exception validateCSVFile() throws CSVException {
+        if (flexiBeans.getBeans().isEmpty()) {
             throw new CSVException("No data found in CSV file " + getFileName());
-        }
-        // validate header line
-        CSVLine headerLine = lines[0];
-        if (headerLine.length() != headerLineSize) {
-            throw new CSVException("Invalid header found in CSV file " + getFileName());
-        }
-        if (!headerLine.field(fileNameLine).equalsIgnoreCase("Filename")
-            || !headerLine.field(titleLine).equalsIgnoreCase("Title")
-            || !headerLine.field(fullNameLine).equalsIgnoreCase("Full Name")
-            || !headerLine.field(firstNameLine).equalsIgnoreCase("First Name")
-            || !headerLine.field(lastNameLine).equalsIgnoreCase("Last Name")) {
-            throw new CSVException("Invalid header: "
-                + headerLine.toString() + " found in CSV file " + getFileName());
         }
         // check for missing images
         List<String> missingImages = getListOfMissingImages();
