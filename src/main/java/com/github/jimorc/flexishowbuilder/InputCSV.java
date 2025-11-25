@@ -22,7 +22,7 @@ public final class InputCSV {
     private File csvFile;
     private FlexiBeans flexiBeans;
     private CSVLine[] lines = new CSVLine[0];
-    private Map<String, ImageAndPersonLine[]> fullNameMap;
+    private Map<String, FlexiBeans> fullNameMap;
     private Set<String> fullNameKeys;
     private ArrayList<String> sortedFullNames;
 
@@ -37,6 +37,7 @@ public final class InputCSV {
      */
     public InputCSV(File csvF) throws CSVException, IOException {
         Logger.trace("In InputCSV constructor");
+        flexiBeans = new FlexiBeans();
         csvFile = csvF;
         if (csvF == null) {
             Logger.error("InputCSV constructor was passed a null CSV file object");
@@ -47,7 +48,16 @@ public final class InputCSV {
             throw new CSVException("Trying to read " + csvF.getAbsolutePath()
                 + " which is not a file.");
         }
-        loadCSVFile();
+        try {
+            loadCSVFile();
+        } catch (BadHeaderException bhe) {
+            Logger.error("BadHeaderException caught trying to read CSV file ", csvFile.getAbsolutePath());
+            try {
+                BuilderGUI.handleBadHeaderException(bhe);
+            } catch (ExceptionInInitializerError e) {
+                // Ignore this. It is thrown in handleBadHeaderException during testing.
+            }
+        }
         buildFullNameHashMap();
     }
 
@@ -80,7 +90,7 @@ public final class InputCSV {
      * purposes.
      * @return the HashMap containing the CSV file lines
      */
-    protected Map<String, ImageAndPersonLine[]> getHashMap() {
+    protected Map<String, FlexiBeans> getHashMap() {
         return fullNameMap;
     }
 
@@ -125,8 +135,9 @@ public final class InputCSV {
             }
         }
         if (fullNameMap.containsKey(name)) {
-            ImageAndPersonLine[] personLines = fullNameMap.get(name);
-            Person p = new Person(personLines[0].getPersonFirstName(), personLines[0].getPersonLastName());
+            FlexiBeans beans = fullNameMap.get(name);
+            Person p = new Person(beans.getBeans().get(0).getFirstName(),
+                beans.getBeans().get(0).getFirstName());
             Logger.debug(BuilderGUI.buildLogMessage(
                 "getPerson returning: ", p.toString()));
             return p;
@@ -151,7 +162,7 @@ public final class InputCSV {
      * This file is protected rather than private so that
      * it can called for testing purposes.
      */
-    protected void loadCSVFile() throws IOException, CSVException {
+    protected void loadCSVFile() throws IOException, CSVException, BadHeaderException {
         Logger.trace("In InputCSV.loadCSVFile");
         String dir = getFileDir();
         java.nio.file.Path path = java.nio.file.Paths.get(dir, getFileName());
@@ -170,12 +181,12 @@ public final class InputCSV {
 
     /**
      * Returns a string representation of the CSV object.
-     * @return a string representation of the CSV object.
+     * @return a string representation of the CSV object
      */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append(FlexiBean.CSV_HEADER);
+        sb.append(FlexiBean.HEADER_BEAN.toString());
         for (FlexiBean bean : flexiBeans.getBeans()) {
             sb.append("\n");
             sb.append(bean.toString());
@@ -230,12 +241,12 @@ public final class InputCSV {
     }
 
     /**
-     * Retrieve the input CSV lines corresponding to the name provided by the argument.
+     * Retrieve the input FlexiBeans corresponding to the name provided by the argument.
      * @param fullName the full name of the person to retrieve the lines for.
-     * @return All input CSV lines for the named person
-     * @throws CSVException when there are no lines for the specified person.
+     * @return All input FlexiBeans for the named person
+     * @throws CSVException when there are no FlexiBeans for the specified person.
      */
-    public ImageAndPersonLine[] getImageLines(String fullName) throws CSVException {
+    public FlexiBeans getPersonBeans(String fullName) throws CSVException {
         if (fullNameMap.containsKey(fullName)) {
             return fullNameMap.get(fullName);
         } else {
@@ -248,24 +259,17 @@ public final class InputCSV {
     private void buildFullNameHashMap() {
         Logger.trace("In InputCSV.buildFullNameHashMap");
         fullNameMap = new HashMap<>();
-        boolean firstLine = true;
-        for (CSVLine line : lines) {
-            if (firstLine) {
-                firstLine = false;
-                continue; // skip header line
-            }
-            ImageAndPersonLine ipLine = (ImageAndPersonLine) line;
-            String fullName = ipLine.getPersonFullName();
+        for (FlexiBean bean: flexiBeans.getBeans()) {
+            String fullName = bean.getFullName();
             if (!fullNameMap.containsKey(fullName)) {
                 Logger.debug(BuilderGUI.buildLogMessage(
                     "Adding ", fullName, " to hash map"));
-                fullNameMap.put(fullName, new ImageAndPersonLine[] {ipLine});
-            } else {
-                ImageAndPersonLine[] existingLines = fullNameMap.get(fullName);
-                ImageAndPersonLine[] newLines = new ImageAndPersonLine[existingLines.length + 1];
-                System.arraycopy(existingLines, 0, newLines, 0, existingLines.length);
-                newLines[existingLines.length] = ipLine;
-                fullNameMap.put(fullName, newLines);
+                FlexiBeans flexiBeansForName = fullNameMap.get(fullName);
+                if (flexiBeansForName == null) {
+                    flexiBeansForName = new FlexiBeans();
+                }
+                flexiBeansForName.append(bean);
+                fullNameMap.put(fullName, flexiBeansForName);
             }
         }
         Logger.debug(BuilderGUI.buildLogMessage(

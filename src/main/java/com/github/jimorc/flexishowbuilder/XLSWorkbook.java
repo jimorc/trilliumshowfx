@@ -22,31 +22,23 @@ public final class XLSWorkbook {
     public XLSWorkbook(final OutputCSV csv) {
         workbook = new HSSFWorkbook();
         Sheet sheet = workbook.createSheet("CSVToXLS");
-        CSVLine[] lines = csv.getLines();
+        FlexiBeans beans = csv.getBeans();
         int rowIndex = 0;
-        for (CSVLine line: lines) {
-            Row row = sheet.createRow(rowIndex++);
+        for (FlexiBean bean : beans.getBeans()) {
             int colNum = 0;
-            switch (line) {
-                case TitleImageLine l:
-                    Cell cell0 = row.createCell(colNum);
-                    cell0.setCellValue(l.field(0));
-                    break;
-                case ImageAndPersonLine ipl:
-                    Cell iCell0 = row.createCell(colNum++);
-                    iCell0.setCellValue(ipl.getImageFileName());
-                    Cell iCell1 = row.createCell(colNum++);
-                    iCell1.setCellValue(ipl.getImageTitle());
-                    Cell iCell2 = row.createCell(colNum++);
-                    iCell2.setCellValue(ipl.getPersonFullName());
-                    Cell iCell3 = row.createCell(colNum++);
-                    iCell3.setCellValue(ipl.getPersonFirstName());
-                    Cell iCell4 = row.createCell(colNum++);
-                    iCell4.setCellValue(ipl.getPersonLastName());
-                    break;
-                default:
-                    break;
-            }
+            Logger.debug(BuilderGUI.buildLogMessage(
+                "XLSWorkbook creating sheet line for bean: ", bean.toString()));
+            Row row = sheet.createRow(rowIndex++);
+            Cell cell0 = row.createCell(colNum++);
+            cell0.setCellValue(bean.getFilename());
+            Cell cell1 = row.createCell(colNum++);
+            cell1.setCellValue(bean.getTitle());
+            Cell cell2 = row.createCell(colNum++);
+            cell2.setCellValue(bean.getFullName());
+            Cell cell3 = row.createCell(colNum++);
+            cell3.setCellValue(bean.getFirstName());
+            Cell cell4 = row.createCell(colNum);
+            cell4.setCellValue(bean.getLastName());
         }
     }
 

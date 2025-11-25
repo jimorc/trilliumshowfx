@@ -31,6 +31,7 @@ public class FlexiBeans {
      * @param csvInputStream InputStream of CSV data
      */
     public FlexiBeans(InputStream csvInputStream) throws BadHeaderException, CSVException {
+        this();
         Logger.trace("In FlexiBeans constructor(InputStream)");
         parseInputStreamReader(new InputStreamReader(csvInputStream));
     }
@@ -44,6 +45,7 @@ public class FlexiBeans {
      *                      a programming error somewhere else in the code.
      */
     public FlexiBeans(File csvF) throws BadHeaderException, CSVException, FileNotFoundException {
+        this();
         Logger.trace("In FlexiBeans constructor(File)");
         if (csvF == null) {
             Logger.error("FlexiBeans constructor was passed a null CSV file object");
@@ -67,6 +69,21 @@ public class FlexiBeans {
      */
     public List<FlexiBean> getBeans() {
         return beans;
+    }
+
+    /**
+     * Get the list of Person objects represented by the FlexiBean objects.
+     * @return list of Person objects
+     */
+    public List<Person> getPersons() {
+        List<Person> fullNames = new ArrayList<Person>();
+        for (FlexiBean bean : beans) {
+            Person person = new Person(bean.getFirstName(), bean.getLastName());
+            if (!fullNames.contains(person)) {
+                fullNames.add(new Person(bean.getFirstName(), bean.getLastName()));
+            }
+        }
+        return fullNames;
     }
 
     /**

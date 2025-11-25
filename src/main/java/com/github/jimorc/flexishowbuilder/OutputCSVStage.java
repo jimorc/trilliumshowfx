@@ -47,31 +47,16 @@ public class OutputCSVStage extends FlexiStage {
         grid.setVgap(gridGap);
         grid.setHgap(gridGap);
 
-        CSVLine[] lines = csv.getLines();
-        int row = 1;
-        for (CSVLine line : lines) {
-            switch (line) {
-                case TitleImageLine l:
-                    grid.add(new Text(l.field(imageCol)), imageCol, row++);
-                    break;
-                case ImageAndPersonLine ipl:
-                    grid.add(new Text(ipl.field(imageCol)), imageCol, row);
-                    grid.add(new Text(ipl.field(titleCol)), titleCol, row);
-                    grid.add(new Text(ipl.field(fullNameCol)), fullNameCol, row);
-                    grid.add(new Text(ipl.field(firstNameCol)), firstNameCol, row);
-                    grid.add(new Text(ipl.field(lastNameCol)), lastNameCol, row++);
-                    break;
-                default:
-                    Logger.error(BuilderGUI.buildLogMessage(
-                        "Invalid line: ", line.toString(), " found in OutputCSV"));
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Programming Error");
-                    alert.setHeaderText("There appears to be a programming error.");
-                    alert.setContentText("Please report it.\n"
-                        + "Program will now exit.");
-                    alert.showAndWait();
-                    System.exit(1);
-            }
+        FlexiBeans beans = csv.getBeans();
+        int row = 0;
+        for (FlexiBean bean : beans.getBeans()) {
+            Logger.debug(BuilderGUI.buildLogMessage(
+                "OutputCSVStage creating grid line for bean: ", bean.toString()));
+            grid.add(new Text(bean.getFilename()), imageCol, row);
+            grid.add(new Text(bean.getTitle()), titleCol, row);
+            grid.add(new Text(bean.getFullName()), fullNameCol, row);
+            grid.add(new Text(bean.getFirstName()), firstNameCol, row);
+            grid.add(new Text(bean.getLastName()), lastNameCol, row++);
         }
         return grid;
     }

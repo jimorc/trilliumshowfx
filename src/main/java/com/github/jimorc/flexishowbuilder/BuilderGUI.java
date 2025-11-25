@@ -105,11 +105,12 @@ public class BuilderGUI extends Application {
         Logger.trace("In BuilderGUI.generateOutputCSV");
         OutputCSV out = new OutputCSV();
         try {
-            out.appendLine(csv.getLine(0));
             String dir = csv.getFileDir();
             String titleFileName = dir + "/title.jpg";
             TitleImage.generateTitleImage(data.getTitle(), titleFileName);
-            out.appendLine(new TitleImageLine("title.jpg"));
+            FlexiBean titleBean = new FlexiBean();
+            titleBean.setFilename("title.jpg");
+            out.appendBean(titleBean);
 
             csv.getBeans().sort(data.getOrder());
             ArrayList<String> fullNames = csv.getSortedFullNames();
@@ -117,20 +118,21 @@ public class BuilderGUI extends Application {
                 Person person = csv.getPerson(name);
                 String fName = name.replaceAll(" ", "_");
                 String fileName = dir + "/" + fName + ".jpg";
-                String title = "";
+                String personTitle = "";
                 if (data.isLastNameAsInitial()) {
-                    title = person.getFirstPlusInitial();
+                    personTitle = person.getFirstPlusInitial();
                 } else {
-                    title = person.getFullName();
+                    personTitle = person.getFullName();
                 }
-                TitleImage.generateTitleImage(title, fileName);
-                out.appendLine(new TitleImageLine(fName + ".jpg"));
-                ImageAndPersonLine[] lines = csv.getImageLines(name);
-                for (ImageAndPersonLine line: lines) {
-                    out.appendLine(line);
+                TitleImage.generateTitleImage(personTitle, fileName);
+                FlexiBean personTitleBean = new FlexiBean();
+                personTitleBean.setFilename(personTitle + ".jpg");
+                out.appendBean(personTitleBean);
+                for (FlexiBean bean: csv.getPersonBeans(name).getBeans()) {
+                    out.appendBean(bean);
                 }
             }
-            out.appendLine(new TitleImageLine("title.jpg"));
+            out.appendBean(titleBean);
         } catch (CSVException e) {
             Logger.error("CSVException thrown in generateOutputCSV: ", e);
             handlePersonException(e);

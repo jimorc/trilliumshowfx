@@ -7,10 +7,10 @@ import com.opencsv.bean.CsvBindByName;
  */
 public class FlexiBean {
     /**
-     * CSV_HEADER contains the contents of the header line.
+     * HEADER_BEAN contains the contents of the header line.
      */
-    public static final String CSV_HEADER =
-        "Filename,Title,Full Name,First Name,Last Name";
+    public static final FlexiBean HEADER_BEAN =
+        generateHeaderBean();
 
     @CsvBindByName(column = "Filename", required = true)
     private String filename;
@@ -105,6 +105,20 @@ public class FlexiBean {
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    /**
+     * generateHeaderBean creates a FlexiBean representing the header line.
+     * @return the header FlexiBean
+     */
+    public static FlexiBean generateHeaderBean() {
+        FlexiBean bean = new FlexiBean();
+        bean.setFilename("Filename");
+        bean.setTitle("Title");
+        bean.setFullName("Full Name");
+        bean.setFirstName("First Name");
+        bean.setLastName("Last Name");
+        return bean;
     }
 
     /**
