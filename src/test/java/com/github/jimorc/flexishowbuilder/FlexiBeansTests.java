@@ -2,6 +2,7 @@ package com.github.jimorc.flexishowbuilder;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -133,6 +134,8 @@ public class FlexiBeansTests {
             throw new RuntimeException(e);
         } catch (BadHeaderException e) {
             fail("BadHeaderException thrown: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            fail("FileNotFoundException thrown: " + e.getMessage());
         }
         List<FlexiBean> beans = flexiBeans.getBeans();
         assertEquals(2, beans.size());
@@ -161,6 +164,8 @@ public class FlexiBeansTests {
                 + "Please report this.", e.getMessage());
         } catch (BadHeaderException e) {
             fail("BadHeaderException thrown: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            fail("FileNotFoundException thrown: " + e.getMessage());
         }
     }
 
@@ -175,6 +180,8 @@ public class FlexiBeansTests {
                 + "Please report this.", e.getMessage());
         } catch (BadHeaderException e) {
             fail("BadHeaderException thrown: " + e.getMessage());
+        } catch (FileNotFoundException e) {
+            fail("FileNotFoundException thrown: " + e.getMessage());
         }
     }
 

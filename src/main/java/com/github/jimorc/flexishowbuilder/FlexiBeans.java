@@ -43,7 +43,7 @@ public class FlexiBeans {
      * @throws CSVException if the file is not found. If this happens, there is likely
      *                      a programming error somewhere else in the code.
      */
-    public FlexiBeans(File csvF) throws BadHeaderException, CSVException {
+    public FlexiBeans(File csvF) throws BadHeaderException, CSVException, FileNotFoundException {
         Logger.trace("In FlexiBeans constructor(File)");
         if (csvF == null) {
             Logger.error("FlexiBeans constructor was passed a null CSV file object");
@@ -57,13 +57,8 @@ public class FlexiBeans {
                 + " which is not a file.\nThis may be a programming error.\n"
                 + "Please report this.");
         }
-        try {
-            InputStreamReader reader = new InputStreamReader(new java.io.FileInputStream(csvF));
-            parseInputStreamReader(reader);
-        } catch (FileNotFoundException e) {
-            // This should have been caught by the isFile() test above, so we will just log it.
-            Logger.error(e, "FileNotFoundException caught trying to read CSV file ", csvF.getAbsolutePath());
-        }
+        InputStreamReader reader = new InputStreamReader(new java.io.FileInputStream(csvF));
+        parseInputStreamReader(reader);
     }
 
     /**

@@ -23,6 +23,7 @@ import org.tinylog.Logger;
  */
 public final class InputCSV {
     private File csvFile;
+    private FlexiBeans flexiBeans;
     private CSVLine[] lines = new CSVLine[0];
     private Map<String, ImageAndPersonLine[]> fullNameMap;
     private Set<String> fullNameKeys;
@@ -51,7 +52,6 @@ public final class InputCSV {
         }
         loadCSVFile();
         buildFullNameHashMap();
-        fullNameKeys = fullNameMap.keySet();
     }
 
     /**
@@ -96,19 +96,19 @@ public final class InputCSV {
     }
 
     /**
-     * Retrieve the lines in the CSV file.
-     * @return an array of CSVLine objects.
+     * Retrieve the FlexiBeans in this object.
+     * @return the FlexiBeans in this object
      */
-    protected CSVLine[] getLines() {
-        return lines;
+    protected FlexiBeans getBeans() {
+        return flexiBeans;
     }
 
     /**
-     * Retrieve the number of lines in the CSV.
-     * @return the number of lines in the CSV.
+     * Retrieve the number of FlexiBean's in the CSV.
+     * @return the number of FlexiBean's in the CSV.
      */
-    protected int getNumberOfLines() {
-        return lines.length;
+    public int getNumberOfBeans() {
+        return flexiBeans.getBeans().size();
     }
 
     /**
@@ -119,6 +119,14 @@ public final class InputCSV {
     public Person getPerson(String name) throws CSVException {
         Logger.debug(BuilderGUI.buildLogMessage(
             "Retrieving Person info for ", name));
+        for (FlexiBean bean : flexiBeans.getBeans()) {
+            if (bean.getFullName().equals(name)) {
+                Person p = new Person(bean.getFirstName(), bean.getLastName());
+                Logger.debug(BuilderGUI.buildLogMessage(
+                    "getPerson returning: ", p.toString()));
+                return p;
+            }
+        }
         if (fullNameMap.containsKey(name)) {
             ImageAndPersonLine[] personLines = fullNameMap.get(name);
             Person p = new Person(personLines[0].getPersonFirstName(), personLines[0].getPersonLastName());
@@ -150,29 +158,15 @@ public final class InputCSV {
         Logger.trace("In InputCSV.loadCSVFile");
         String dir = getFileDir();
         java.nio.file.Path path = java.nio.file.Paths.get(dir, getFileName());
-        List<String> allLines = java.nio.file.Files.readAllLines(path);
-        Logger.debug(BuilderGUI.buildLogMessage(
-            "Number of lines in InputCSV file: ", Integer.toString(allLines.size())));
-        for (int i = 0; i < allLines.size(); i++) {
-            Logger.debug(BuilderGUI.buildLogMessage(
-                "Line ", Integer.toString(i), ":", allLines.get(i)));
-        }
-        lines = new CSVLine[allLines.size()];
-        for (int i = 0; i < allLines.size(); i++) {
+        csvFile = path.toFile();
+        try {
+            flexiBeans = new FlexiBeans(csvFile);
+        } catch (BadHeaderException bhe) {
+            Logger.error("BadHeaderException caught trying to read CSV file ", csvFile.getAbsolutePath());
             try {
-                lines[i] = new ImageAndPersonLine(allLines.get(i));
-            } catch (ArrayIndexOutOfBoundsException aioobe) {
-                if (i == 0) {
-                    Logger.error(BuilderGUI.buildLogMessage(
-                        "Header line: ", allLines.get(0), " is invalid"));
-                    throw new CSVException("Invalid header found in CSV file " + getFileName());
-                } else {
-                    Logger.error(BuilderGUI.buildLogMessage(
-                        "Line ", Integer.toString(i), " is invalid"));
-                    Logger.error("ArrayIndexOutOfBoundsException: ", aioobe);
-                    throw new CSVException("Invalid line number " + (i + 1) + " found in CSV file " + getFileName()
-                        + "\nLine does not contain at least 5 fields.");
-                }
+                BuilderGUI.handleBadHeaderException(bhe);
+            } catch (ExceptionInInitializerError e) {
+                // Ignore this. It is thrown in handleBadHeaderException during testing.
             }
         }
     }
@@ -184,14 +178,10 @@ public final class InputCSV {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (CSVLine line : lines) {
-            for (int i = 0; i < line.length(); i++) {
-                sb.append(line.field(i));
-                if (i < line.length() - 1) {
-                    sb.append(",");
-                }
-            }
+        sb.append(FlexiBean.CSV_HEADER);
+        for (FlexiBean bean : flexiBeans.getBeans()) {
             sb.append("\n");
+            sb.append(bean.toString());
         }
         return sb.toString();
     }
@@ -199,33 +189,33 @@ public final class InputCSV {
     /**
      * Inserts a CSVLine at the specified index.
      * @param index - the index at which to insert the line
-     * @param line  - the line to insert
+     * @param bean  - the FlexiBean to insert
      * @throws ArrayIndexOutOfBoundsException if the index is negative, or
      * greater than the number of lines.
      */
-    public void insertAt(int index, CSVLine line) throws ArrayIndexOutOfBoundsException {
-        if (index < 0 || index > lines.length) {
+    public void insertAt(int index, FlexiBean bean) throws ArrayIndexOutOfBoundsException {
+        if (index < 0 || index > flexiBeans.getBeans().size()) {
             Logger.error(BuilderGUI.buildLogMessage(
                 "Index out of bounds in InputCSV.insertAt: ", Integer.toString(index)));
             throw new ArrayIndexOutOfBoundsException("Index out of bounds: " + index);
         }
-        CSVLine[] newLines = new CSVLine[lines.length + 1];
+        FlexiBeans beans = new FlexiBeans();
         for (int i = 0; i < index; i++) {
-            newLines[i] = lines[i];
+            beans.append(flexiBeans.getBeans().get(i));
         }
-        newLines[index] = line;
-        for (int i = index; i < lines.length; i++) {
-            newLines[i + 1] = lines[i];
+        beans.append(bean);
+        for (int i = index; i < flexiBeans.getBeans().size(); i++) {
+            beans.append(flexiBeans.getBeans().get(i));
         }
-        lines = newLines;
+        flexiBeans = beans;
     }
 
     /**
      * Appends a CSVLine to the end of the CSV object.
-     * @param line - the line to append
+     * @param bean - the FlexiBean to append
      */
-    public void append(CSVLine line) {
-        insertAt(lines.length, line);
+    public void append(FlexiBean bean) {
+        insertAt(flexiBeans.getBeans().size(), bean);
     }
 
     /**

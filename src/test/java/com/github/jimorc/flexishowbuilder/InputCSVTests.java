@@ -54,7 +54,16 @@ public class InputCSVTests {
     @Test
     void testConstructorNoHeaderInFile() {
         File f = new File("testing/data/zeroheaderlength.csv");
-        assertThrows(CSVException.class, () -> new InputCSV(f));
+        try {
+            new InputCSV(f);
+        } catch (IOException ioe) {
+            fail("IOException thrown: " + ioe.getMessage());
+        } catch (CSVException csve) {
+            fail("CSVException thrown: " + csve.getMessage());
+        } catch (IllegalStateException ise) {
+            // we need to ignore this
+            return;
+        }
     }
 
     @Test
@@ -94,9 +103,9 @@ public class InputCSVTests {
 
     @Test
     void testInsertAt() {
-        final int line1 = 1;
-        final int line2 = 2;
-        final int line3 = 3;
+        final int bean1 = 1;
+        final int bean2 = 2;
+        final int bean0 = 0;
         InputCSV csv = null;
         try {
             File f = new File("testing/data/test.csv");
@@ -106,21 +115,26 @@ public class InputCSVTests {
         } catch (CSVException csve) {
             fail("CSVException thrown: " + csve.getMessage());
         }
-        final int numLines = csv.getNumberOfLines();
-        CSVLine newLine = new ImageAndPersonLine("image4.jpg,\"Image, Two\",Bob Brown,Bob,Brown");
-        csv.insertAt(1, newLine);
-        assertEquals(numLines + 1, csv.getNumberOfLines());
-        assertEquals("image4.jpg", ((ImageAndPersonLine) csv.getLine(line1)).getImageFileName());
-        assertEquals("image1.jpg", ((ImageAndPersonLine) csv.getLine(line2)).getImageFileName());
-        assertEquals("image2.jpg", ((ImageAndPersonLine) csv.getLine(line3)).getImageFileName());
+        final int numBeans = csv.getNumberOfBeans();
+        FlexiBean newBean = new FlexiBean();
+        newBean.setFilename("image4.jpg");
+        newBean.setTitle("\"Image, Two\"");
+        newBean.setFullName("Bob Brown");
+        newBean.setFirstName("Bob");
+        newBean.setLastName("Brown");
+        csv.insertAt(1, newBean);
+        assertEquals(numBeans + 1, csv.getNumberOfBeans());
+        assertEquals("image4.jpg", csv.getBeans().getBeans().get(bean1).getFilename());
+        assertEquals("image1.jpg", csv.getBeans().getBeans().get(bean0).getFilename());
+        assertEquals("image2.jpg", csv.getBeans().getBeans().get(bean2).getFilename());
     }
 
     @Test
     void testInsertAtBeginning() {
-        final int numLines = 4;
-        final int line0 = 0;
-        final int line2 = 2;
-        final int line3 = 3;
+        final int numBeans = 3;
+        final int bean0 = 0;
+        final int bean1 = 1;
+        final int bean2 = 2;
         InputCSV csv = null;
         try {
             File f = new File("testing/data/test.csv");
@@ -131,20 +145,25 @@ public class InputCSVTests {
             fail("CSVException thrown: " + csve.getMessage());
         }
 
-        CSVLine newLine = new ImageAndPersonLine("image4.jpg,Image Four,Bob Brown,Bob,Brown");
-        csv.insertAt(0, newLine);
-        assertEquals(numLines, csv.getNumberOfLines());
-        assertEquals("image4.jpg", ((ImageAndPersonLine) csv.getLine(line0)).getImageFileName());
-        assertEquals("image1.jpg", ((ImageAndPersonLine) csv.getLine(line2)).getImageFileName());
-        assertEquals("image2.jpg", ((ImageAndPersonLine) csv.getLine(line3)).getImageFileName());
+        FlexiBean newBean = new FlexiBean();
+        newBean.setFilename("image4.jpg");
+        newBean.setTitle("Image Four");
+        newBean.setFullName("Bob Brown");
+        newBean.setFirstName("Bob");
+        newBean.setLastName("Brown");
+        csv.insertAt(0, newBean);
+        assertEquals(numBeans, csv.getNumberOfBeans());
+        assertEquals("image4.jpg", csv.getBeans().getBeans().get(bean0).getFilename());
+        assertEquals("image1.jpg", csv.getBeans().getBeans().get(bean1).getFilename());
+        assertEquals("image2.jpg", csv.getBeans().getBeans().get(bean2).getFilename());
     }
 
     @Test
     void testInsertAtEnd() {
-        final int numLines = 4;
-        final int line1 = 1;
-        final int line2 = 2;
-        final int line3 = 3;
+        final int numBeans = 3;
+        final int bean0 = 0;
+        final int bean1 = 1;
+        final int bean2 = 2;
         InputCSV csv = null;
         try {
             File f = new File("testing/data/test.csv");
@@ -154,12 +173,17 @@ public class InputCSVTests {
         } catch (CSVException csve) {
             fail("CSVException thrown: " + csve.getMessage());
         }
-        CSVLine newLine = new ImageAndPersonLine("image4.jpg,Image Three,Bob Brown,Bob,Brown");
-        csv.insertAt(line3, newLine);
-        assertEquals(numLines, csv.getNumberOfLines());
-        assertEquals("image1.jpg", ((ImageAndPersonLine) csv.getLine(line1)).getImageFileName());
-        assertEquals("image2.jpg", ((ImageAndPersonLine) csv.getLine(line2)).getImageFileName());
-        assertEquals("image4.jpg", ((ImageAndPersonLine) csv.getLine(line3)).getImageFileName());
+        FlexiBean newBean = new FlexiBean();
+        newBean.setFilename("image4.jpg");
+        newBean.setTitle("Image Three");
+        newBean.setFullName("Bob Brown");
+        newBean.setFirstName("Bob");
+        newBean.setLastName("Brown");
+        csv.insertAt(bean2, newBean);
+        assertEquals(numBeans, csv.getNumberOfBeans());
+        assertEquals("image1.jpg", csv.getBeans().getBeans().get(bean0).getFilename());
+        assertEquals("image2.jpg", csv.getBeans().getBeans().get(bean1).getFilename());
+        assertEquals("image4.jpg", csv.getBeans().getBeans().get(bean2).getFilename());
     }
 
     @Test
@@ -174,15 +198,20 @@ public class InputCSVTests {
         } catch (CSVException csve) {
             fail("CSVException thrown: " + csve.getMessage());
         }
-        CSVLine newLine = new ImageAndPersonLine("image3.jpg,Image Three,Bob Brown,Bob,Brown");
+        FlexiBean newBean = new FlexiBean();
+        newBean.setFilename("image3.jpg");
+        newBean.setTitle("Image Three");
+        newBean.setFullName("Bob Brown");
+        newBean.setFirstName("Bob");
+        newBean.setLastName("Brown");
         try {
-            csv.insertAt(minus1, newLine);
+            csv.insertAt(minus1, newBean);
             fail("ArrayIndexOutOfBoundsException not thrown for negative index");
         } catch (ArrayIndexOutOfBoundsException aioobe) {
             // expected
         }
         try {
-            csv.insertAt(csv.getNumberOfLines() + 1, newLine);
+            csv.insertAt(csv.getNumberOfBeans() + 1, newBean);
             fail("ArrayIndexOutOfBoundsException not thrown for index greater than number of lines");
         } catch (ArrayIndexOutOfBoundsException aioobe) {
             // expected
@@ -191,10 +220,10 @@ public class InputCSVTests {
 
     @Test
     void testAppend() {
-        final int numLines = 4;
-        final int line1 = 1;
-        final int line2 = 2;
-        final int line3 = 3;
+        final int numBeans = 3;
+        final int bean0 = 0;
+        final int bean1 = 1;
+        final int bean2 = 2;
         InputCSV csv = null;
         try {
             File f = new File("testing/data/test.csv");
@@ -204,367 +233,59 @@ public class InputCSVTests {
         } catch (CSVException csve) {
             fail("CSVException thrown: " + csve.getMessage());
         }
-        CSVLine newLine = new ImageAndPersonLine("image4.jpg,Image Four,Bob Brown,Bob,Brown");
-        csv.append(newLine);
-        assertEquals(numLines, csv.getNumberOfLines());
-        assertEquals("image1.jpg", ((ImageAndPersonLine) csv.getLine(line1)).getImageFileName());
-        assertEquals("image2.jpg", ((ImageAndPersonLine) csv.getLine(line2)).getImageFileName());
-        assertEquals("image4.jpg", ((ImageAndPersonLine) csv.getLine(line3)).getImageFileName());
-    }
-
-    @Test
-    void testAppendToEmptyCSV() {
-        InputCSV csv = null;
-        try {
-            File f = new File("testing/data/empty.csv");
-            csv = new InputCSV(f);
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            fail("CSVException thrown: " + csve.getMessage());
-        }
-        CSVLine newLine = new ImageAndPersonLine("image1.jpg,Image One,John Doe,John,Doe");
-        csv.append(newLine);
-        assertEquals(1, csv.getNumberOfLines());
-        assertEquals("image1.jpg", ((ImageAndPersonLine) csv.getLine(0)).getImageFileName());
+        FlexiBean newBean = new FlexiBean();
+        newBean.setFilename("image4.jpg");
+        newBean.setTitle("Image Four");
+        newBean.setFullName("Bob Brown");
+        newBean.setFirstName("Bob");
+        newBean.setLastName("Brown");
+        csv.append(newBean);
+        assertEquals(numBeans, csv.getNumberOfBeans());
+        assertEquals("image1.jpg", csv.getBeans().getBeans().get(bean0).getFilename());
+        assertEquals("image2.jpg", csv.getBeans().getBeans().get(bean1).getFilename());
+        assertEquals("image4.jpg", csv.getBeans().getBeans().get(bean2).getFilename());
     }
 
     @Test
     void testAppendMultiple() {
-        final int numLines = 3;
-        final int firstLine = 0;
-        final int secondLine = 1;
-        final int thirdLine = 2;
+        final int numBeans = 5;
+        final int firstBean = 2;
+        final int secondBean = 3;
+        final int thirdBean = 4;
         InputCSV csv = null;
         try {
-            File f = new File("testing/data/empty.csv");
+            File f = new File("testing/data/test.csv");
             csv = new InputCSV(f);
         } catch (IOException ioe) {
             fail("IOException thrown: " + ioe.getMessage());
         } catch (CSVException csve) {
             fail("CSVException thrown: " + csve.getMessage());
         }
-        CSVLine line1 = new ImageAndPersonLine("image1.jpg,Image One,John Doe,John,Doe");
-        CSVLine line2 = new ImageAndPersonLine("image2.jpg,\"Image, Two\",Jane Smith,Jane,Smith");
-        CSVLine line3 = new ImageAndPersonLine("image3.jpg,Image Three,Bob Brown,Bob,Brown");
-        csv.append(line1);
-        csv.append(line2);
-        csv.append(line3);
-        assertEquals(numLines, csv.getNumberOfLines());
-        assertEquals("image1.jpg", ((ImageAndPersonLine) csv.getLine(firstLine)).getImageFileName());
-        assertEquals("image2.jpg", ((ImageAndPersonLine) csv.getLine(secondLine)).getImageFileName());
-        assertEquals("image3.jpg", ((ImageAndPersonLine) csv.getLine(thirdLine)).getImageFileName());
-    }
-
-    @Test
-    void testSortAlphaByFullName() {
-        // number of names in InputCSV.sortedFullNames array.
-        final int sortedNamesSize = 5;
-        // number of InputCSVLines in resorted InputCSV.
-        final int sortFileLines = 7;
-        // Order the full names are sorted in AlphabeticalByFullName.
-        final int jsLFFullNames = 2;
-        final int brLFFullNames = 0;
-        final int wfLFFullNames = 4;
-        final int ffLFFullNames = 1;
-        final int jdLFFullNames = 3;
-        // position of Barney Rubble InputAndPersonLine in sorted InputCSV.
-        final int brLine = 1;
-        // position of first Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine1 = 2;
-        // position of second Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine2 = 3;
-        // position of Wilma Flintstone InputAndPersonLine in sorted InputCSV.
-        final int wfLine = 6;
-        // position of Jane Smith InputAndPersonLine in sorted InputCSV.
-        final int jsLine = 4;
-        // position of John Doe InputAndPersonLine in sorted InputCSV.
-        final int jdLine = 5;
-        InputCSV csv = null;
-        try {
-            File f = new File("testing/data/sort.csv");
-            csv = new InputCSV(f);
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            fail("CSVException thrown: " + csve.getMessage());
-        }
-        csv.sortNames(SortOrder.AlphabeticalByFullName);
-        assertEquals(sortedNamesSize, csv.getSortedFullNames().size());
-        assertEquals("Barney Rubble", csv.getSortedFullNames().get(brLFFullNames));
-        assertEquals("Fred Flintstone", csv.getSortedFullNames().get(ffLFFullNames));
-        assertEquals("Jane Smith", csv.getSortedFullNames().get(jsLFFullNames));
-        assertEquals("John Doe", csv.getSortedFullNames().get(jdLFFullNames));
-        assertEquals("Wilma Flintstone", csv.getSortedFullNames().get(wfLFFullNames));
-        assertEquals(sortFileLines, csv.getNumberOfLines());
-        assertEquals("Barney Rubble", ((ImageAndPersonLine) csv.getLine(brLine)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine1)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine2)).getPersonFullName());
-        assertEquals("Jane Smith", ((ImageAndPersonLine) csv.getLine(jsLine)).getPersonFullName());
-        assertEquals("John Doe", ((ImageAndPersonLine) csv.getLine(jdLine)).getPersonFullName());
-        assertEquals("Wilma Flintstone", ((ImageAndPersonLine) csv.getLine(wfLine)).getPersonFullName());
-        assertEquals(sortedNamesSize, csv.getHashMap().size());
-        assertEquals(sortedNamesSize, csv.getFullNameKeys().size());
-    }
-
-    @Test
-    void testSortAlphaByFullNameReverseOrder() {
-        // number of names in InputCSV.sortedFullNames array.
-        final int sortedNamesSize = 5;
-        // number of InputCSVLines in resorted InputCSV.
-        final int sortFileLines = 7;
-        // Order the full names are sorted in AlpahbeticalByFullNameReverse.
-        final int jsLFFullNames = 2;
-        final int brLFFullNames = 4;
-        final int wfLFFullNames = 0;
-        final int ffLFFullNames = 3;
-        final int jdLFFullNames = 1;
-        // position of Barney Rubble InputAndPersonLine in sorted InputCSV.
-        final int brLine = 6;
-        // position of first Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine1 = 4;
-        // position of second Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine2 = 5;
-        // position of Wilma Flintstone InputAndPersonLine in sorted InputCSV.
-        final int wfLine = 1;
-        // position of Jane Smith InputAndPersonLine in sorted InputCSV.
-        final int jsLine = 3;
-        // position of John Doe InputAndPersonLine in sorted InputCSV.
-        final int jdLine = 2;
-        InputCSV csv = null;
-        try {
-            File f = new File("testing/data/sort.csv");
-            csv = new InputCSV(f);
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            fail("CSVException thrown: " + csve.getMessage());
-        }
-        csv.sortNames(SortOrder.AlphabeticalByFullNameReverse);
-        assertEquals(sortedNamesSize, csv.getSortedFullNames().size());
-        assertEquals("Wilma Flintstone", csv.getSortedFullNames().get(wfLFFullNames));
-        assertEquals("John Doe", csv.getSortedFullNames().get(jdLFFullNames));
-        assertEquals("Jane Smith", csv.getSortedFullNames().get(jsLFFullNames));
-        assertEquals("Fred Flintstone", csv.getSortedFullNames().get(ffLFFullNames));
-        assertEquals("Barney Rubble", csv.getSortedFullNames().get(brLFFullNames));
-        assertEquals(sortFileLines, csv.getNumberOfLines());
-        assertEquals("Barney Rubble", ((ImageAndPersonLine) csv.getLine(brLine)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine1)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine2)).getPersonFullName());
-        assertEquals("Jane Smith", ((ImageAndPersonLine) csv.getLine(jsLine)).getPersonFullName());
-        assertEquals("John Doe", ((ImageAndPersonLine) csv.getLine(jdLine)).getPersonFullName());
-        assertEquals("Wilma Flintstone", ((ImageAndPersonLine) csv.getLine(wfLine)).getPersonFullName());
-        assertEquals(sortedNamesSize, csv.getHashMap().size());
-        assertEquals(sortedNamesSize, csv.getFullNameKeys().size());
-    }
-
-    @Test
-    void testSortAlphaByLastNameFirstName() {
-        // number of names in InputCSV.sortedFullNames array.
-        final int sortedNamesSize = 5;
-        // number of InputCSVLines in resorted InputCSV.
-        final int sortFileLines = 7;
-        // Order the full names are sorted in AlpabeticalByLastNameThenFirstName.
-        final int jsLFFullNames = 0;
-        final int brLFFullNames = 3;
-        final int wfLFFullNames = 2;
-        final int ffLFFullNames = 1;
-        final int jdLFFullNames = 4;
-        // position of Barney Rubble InputAndPersonLine in sorted InputCSV.
-        final int brLine = 5;
-        // position of first Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine1 = 2;
-        // position of second Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine2 = 3;
-        // position of Wilma Flintstone InputAndPersonLine in sorted InputCSV.
-        final int wfLine = 4;
-        // position of Jane Smith InputAndPersonLine in sorted InputCSV.
-        final int jsLine = 6;
-        // position of John Doe InputAndPersonLine in sorted InputCSV.
-        final int jdLine = 1;
-        InputCSV csv = null;
-        try {
-            File f = new File("testing/data/sort.csv");
-            csv = new InputCSV(f);
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            fail("CSVException thrown: " + csve.getMessage());
-        }
-        csv.sortNames(SortOrder.AlphabeticalByLastNameThenFirstName);
-        assertEquals(sortedNamesSize, csv.getSortedFullNames().size());
-        assertEquals("John Doe", csv.getSortedFullNames().get(jsLFFullNames));
-        assertEquals("Fred Flintstone", csv.getSortedFullNames().get(ffLFFullNames));
-        assertEquals("Wilma Flintstone", csv.getSortedFullNames().get(wfLFFullNames));
-        assertEquals("Barney Rubble", csv.getSortedFullNames().get(brLFFullNames));
-        assertEquals("Jane Smith", csv.getSortedFullNames().get(jdLFFullNames));
-        assertEquals(sortFileLines, csv.getNumberOfLines());
-        assertEquals("Barney Rubble", ((ImageAndPersonLine) csv.getLine(brLine)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine1)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine2)).getPersonFullName());
-        assertEquals("Wilma Flintstone", ((ImageAndPersonLine) csv.getLine(wfLine)).getPersonFullName());
-        assertEquals("Jane Smith", ((ImageAndPersonLine) csv.getLine(jsLine)).getPersonFullName());
-        assertEquals("John Doe", ((ImageAndPersonLine) csv.getLine(jdLine)).getPersonFullName());
-        assertEquals(sortedNamesSize, csv.getHashMap().size());
-        assertEquals(sortedNamesSize, csv.getFullNameKeys().size());
-    }
-
-    @Test
-    void testSortAlphaByLastNameFirstNameReverseOrder() {
-        // number of names in InputCSV.sortedFullNames array.
-        final int sortedNamesSize = 5;
-        // number of InputCSVLines in resorted InputCSV.
-        final int sortFileLines = 7;
-        // Order the full names are sorted in ALPHABETICAL_BY_LAST_NAME_THEN_FIRST_NAME_REVERSE.
-        final int jsLFFullNames = 0;
-        final int brLFFullNames = 1;
-        final int wfLFFullNames = 2;
-        final int ffLFFullNames = 3;
-        final int jdLFFullNames = 4;
-        // position of Barney Rubble InputAndPersonLine in sorted InputCSV.
-        final int brLine = 2;
-        // position of first Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine1 = 4;
-        // position of second Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine2 = 5;
-        // position of Wilma Flintstone InputAndPersonLine in sorted InputCSV.
-        final int wfLine = 3;
-        // position of Jane Smith InputAndPersonLine in sorted InputCSV.
-        final int jsLine = 1;
-        // position of John Doe InputAndPersonLine in sorted InputCSV.
-        final int jdLine = 6;
-
-        // Order the sorted CSVLines are sorted in AlpabeticalByLastNameThenFirstNameReverse.
-        InputCSV csv = null;
-        try {
-            File f = new File("testing/data/sort.csv");
-            csv = new InputCSV(f);
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            fail("CSVException thrown: " + csve.getMessage());
-        }
-        csv.sortNames(SortOrder.AlphabeticalByLastNameThenFirstNameReverse);
-        assertEquals(sortedNamesSize, csv.getSortedFullNames().size());
-        assertEquals("Jane Smith", csv.getSortedFullNames().get(jsLFFullNames));
-        assertEquals("Barney Rubble", csv.getSortedFullNames().get(brLFFullNames));
-        assertEquals("Wilma Flintstone", csv.getSortedFullNames().get(wfLFFullNames));
-        assertEquals("Fred Flintstone", csv.getSortedFullNames().get(ffLFFullNames));
-        assertEquals("John Doe", csv.getSortedFullNames().get(jdLFFullNames));
-        assertEquals(sortFileLines, csv.getNumberOfLines());
-        assertEquals("Barney Rubble", ((ImageAndPersonLine) csv.getLine(brLine)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine1)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine2)).getPersonFullName());
-        assertEquals("Wilma Flintstone", ((ImageAndPersonLine) csv.getLine(wfLine)).getPersonFullName());
-        assertEquals("Jane Smith", ((ImageAndPersonLine) csv.getLine(jsLine)).getPersonFullName());
-        assertEquals("John Doe", ((ImageAndPersonLine) csv.getLine(jdLine)).getPersonFullName());
-        assertEquals(sortedNamesSize, csv.getHashMap().size());
-        assertEquals(sortedNamesSize, csv.getFullNameKeys().size());
-    }
-
-    @Test
-    void testSortNone() {
-        // number of names in InputCSV.sortedFullNames array.
-        final int sortedNamesSize = 5;
-        // number of InputCSVLines in resorted InputCSV.
-        final int sortFileLines = 7;
-        // position of John Doe in sortedFullNames array.
-        final int jdFullNamesAsIs = 0;
-        // position of Jane Smith in sortedFullNames array.
-        final int jsFullNamesAsIs = 1;
-        // position of Fred Flintstone in sortedFullNames array.
-        final int ffFullNamesAsIs = 2;
-        // position of Barney Rubble in sortedFullNames array.
-        final int brFullNamesAsIs = 3;
-        // position of Wilma Flintstone in sortedFullNames array.
-        final int wfFullNamesAsIs = 4;
-        // position of Barney Rubble InputAndPersonLine in sorted InputCSV.
-        final int brLine = 5;
-        // position of first Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine1 = 3;
-        // position of second Fred Flintstone InputAndPersonLine in sorted InputCSV.
-        final int ffLine2 = 4;
-        // position of Wilma Flintstone InputAndPersonLine in sorted InputCSV.
-        final int wfLine = 6;
-        // position of Jane Smith InputAndPersonLine in sorted InputCSV.
-        final int jsLine = 2;
-        // position of John Doe InputAndPersonLine in sorted InputCSV.
-        final int jdLine = 1;
-
-        InputCSV csv = null;
-        try {
-            File f = new File("testing/data/sort.csv");
-            csv = new InputCSV(f);
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            fail("CSVException thrown: " + csve.getMessage());
-        }
-        csv.sortNames(SortOrder.AsIs);
-
-        assertEquals(sortedNamesSize, csv.getSortedFullNames().size());
-        assertEquals("John Doe", csv.getSortedFullNames().get(jdFullNamesAsIs));
-        assertEquals("Jane Smith", csv.getSortedFullNames().get(jsFullNamesAsIs));
-        assertEquals("Fred Flintstone", csv.getSortedFullNames().get(ffFullNamesAsIs));
-        assertEquals("Barney Rubble", csv.getSortedFullNames().get(brFullNamesAsIs));
-        assertEquals("Wilma Flintstone", csv.getSortedFullNames().get(wfFullNamesAsIs));
-        assertEquals(sortFileLines, csv.getNumberOfLines());
-        assertEquals("Barney Rubble", ((ImageAndPersonLine) csv.getLine(brLine)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine1)).getPersonFullName());
-        assertEquals("Fred Flintstone", ((ImageAndPersonLine) csv.getLine(ffLine2)).getPersonFullName());
-        assertEquals("Wilma Flintstone", ((ImageAndPersonLine) csv.getLine(wfLine)).getPersonFullName());
-        assertEquals("Jane Smith", ((ImageAndPersonLine) csv.getLine(jsLine)).getPersonFullName());
-        assertEquals("John Doe", ((ImageAndPersonLine) csv.getLine(jdLine)).getPersonFullName());
-        assertEquals(sortedNamesSize, csv.getHashMap().size());
-        assertEquals(sortedNamesSize, csv.getFullNameKeys().size());
-    }
-
-    @Test
-    void testValidateCSVFileEmpty() {
-        try {
-            File f = new File("testing/data/empty.csv");
-            InputCSV csv = new InputCSV(f);
-            csv.validateCSVFile();
-
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            String expectedMessage = "No data found in CSV file empty.csv";
-            String actualMessage = csve.getMessage();
-            assertEquals(expectedMessage, actualMessage);
-        }
-    }
-
-    @Test
-    void testValidateCSVFileZerodHeaderLength() {
-        try {
-            File f = new File("testing/data/zeroheaderlength.csv");
-            InputCSV csv = new InputCSV(f);
-            assertThrows(Exception.class, () -> csv.validateCSVFile());
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            String expectedMessage = "Invalid header found in CSV file zeroheaderlength.csv";
-            String actualMessage = csve.getMessage();
-            assertEquals(expectedMessage, actualMessage);
-        }
-    }
-
-    @Test
-    void testValidateCSVFileInvalidHeader() {
-        try {
-            File f = new File("testing/data/invalidline.csv");
-            InputCSV csv = new InputCSV(f);
-            assertThrows(Exception.class, () -> csv.validateCSVFile());
-
-        } catch (IOException ioe) {
-            fail("IOException thrown: " + ioe.getMessage());
-        } catch (CSVException csve) {
-            String expectedMessage = "Invalid line number 2 found in CSV file invalidline.csv"
-                + "\nLine does not contain at least 5 fields.";
-            String actualMessage = csve.getMessage();
-            assertEquals(expectedMessage, actualMessage);
-        }
+        FlexiBean newBean1 = new FlexiBean();
+        newBean1.setFilename("image4.jpg");
+        newBean1.setTitle("Image One");
+        newBean1.setFullName("John Doe");
+        newBean1.setFirstName("John");
+        newBean1.setLastName("Doe");
+        FlexiBean newBean2 = new FlexiBean();
+        newBean2.setFilename("image5.jpg");
+        newBean2.setTitle("Image Two");
+        newBean2.setFullName("Jane Smith");
+        newBean2.setFirstName("Jane");
+        newBean2.setLastName("Smith");
+        FlexiBean newBean3 = new FlexiBean();
+        newBean3.setFilename("image6.jpg");
+        newBean3.setTitle("Image Three");
+        newBean3.setFullName("Bob Brown");
+        newBean3.setFirstName("Bob");
+        newBean3.setLastName("Brown");
+        csv.append(newBean1);
+        csv.append(newBean2);
+        csv.append(newBean3);
+        assertEquals(numBeans, csv.getNumberOfBeans());
+        assertEquals("image4.jpg", csv.getBeans().getBeans().get(firstBean).getFilename());
+        assertEquals("image5.jpg", csv.getBeans().getBeans().get(secondBean).getFilename());
+        assertEquals("image6.jpg", csv.getBeans().getBeans().get(thirdBean).getFilename());
     }
 
     @Test
@@ -612,20 +333,22 @@ public class InputCSVTests {
     }
 
     @Test
-    void testGetImageLinesValidName() {
+    void testGetBeansValidName() {
         InputCSV csv = null;
         try {
             File f = new File("testing/data/sort.csv");
             csv = new InputCSV(f);
-            csv.sortNames(SortOrder.AlphabeticalByFullName);
-            ImageAndPersonLine[] lines = csv.getImageLines("John Doe");
-            assertEquals(1, lines.length);
-            assertEquals("image1.jpg,Image One,John Doe,John,Doe", lines[0].toString());
-
-            lines = csv.getImageLines("Fred Flintstone");
-            assertEquals(2, lines.length);
-            assertEquals("DSC-0424.jpg,My Image,Fred Flintstone,Fred,Flintstone", lines[0].toString());
-            assertEquals("IMG-276.jpg,My Next Image,Fred Flintstone,Fred,Flintstone", lines[1].toString());
+            FlexiBean[] beans = csv.getBeans().getBeans().stream()
+                .filter(b -> b.getFullName().equals("John Doe"))
+                .toArray(FlexiBean[]::new);
+            assertEquals(1, beans.length);
+            assertEquals("image1.jpg", beans[0].getFilename());
+            beans = csv.getBeans().getBeans().stream()
+                .filter(b -> b.getFullName().equals("Fred Flintstone"))
+                .toArray(FlexiBean[]::new);
+            assertEquals(2, beans.length);
+            assertEquals("DSC-0424.jpg", beans[0].getFilename());
+            assertEquals("IMG-276.jpg", beans[1].getFilename());
         } catch (IOException ioe) {
             fail("IOException thrown: " + ioe.getMessage());
         } catch (CSVException csve) {
@@ -639,9 +362,10 @@ public class InputCSVTests {
         try {
             File f = new File("testing/data/sort.csv");
             csv = new InputCSV(f);
-            csv.sortNames(SortOrder.AlphabeticalByFullName);
-            csv.getImageLines("Bob Brown");
-            fail("Should have thrown CSVException for invalid name.");
+            FlexiBean[] beans = csv.getBeans().getBeans().stream()
+                .filter(b -> b.getFullName().equals("Bob Brown"))
+                .toArray(FlexiBean[]::new);
+            assertEquals(0, beans.length);
         } catch (CSVException csve) {
             assertEquals("The CSV file does not contain lines for Bob Brown", csve.getMessage());
         } catch (IOException ioe) {

@@ -84,6 +84,23 @@ public class BuilderGUI extends Application {
         System.exit(1);
     }
 
+    /**
+     * handleBadHeaderException displays an error alert.
+     * @param bhe the BadHeaderException
+     * @throws ExceptionInInitializerError
+     */
+    public static void handleBadHeaderException(BadHeaderException bhe)
+            throws ExceptionInInitializerError {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("CSV Header Error");
+        alert.setHeaderText("Bad CSV Header");
+        alert.setContentText("The CSV file either contains a bad header\n"
+            + "or is missing the required header entirely.\n"
+            + "Processing cannot continue.\nPClick OK to terminate.");
+        alert.showAndWait();
+        System.exit(1);
+    }
+
     private OutputCSV generateOutputCSV(InputCSV csv, TitleAndSortData data) {
         Logger.trace("In BuilderGUI.generateOutputCSV");
         OutputCSV out = new OutputCSV();

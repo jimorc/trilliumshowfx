@@ -6,6 +6,12 @@ import com.opencsv.bean.CsvBindByName;
  * FlexiBean represents a row in the CSV input file.
  */
 public class FlexiBean {
+    /**
+     * CSV_HEADER contains the contents of the header line.
+     */
+    public static final String CSV_HEADER =
+        "Filename,Title,Full Name,First Name,Last Name";
+
     @CsvBindByName(column = "Filename", required = true)
     private String filename;
 
