@@ -59,7 +59,7 @@ public class OutputCSVStage extends FlexiStage {
     }
 
     private GridPane createGrid(OutputCSV csv) {
-        final int gridGap = 5;
+        final int gridGap = 0;
         final int padding = 10;
 
         GridPane grid = new GridPane();
