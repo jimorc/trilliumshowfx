@@ -17,6 +17,31 @@ import org.tinylog.Logger;
  * OutputCSVStage is the panel that displays the OutputCSV object.
  */
 public class OutputCSVStage extends FlexiStage {
+    /**
+     * Columns enum represents the columns in the output CSV display.
+     */
+    private enum Columns {
+        /**
+         * IMAGE_COL represents the image column.
+         */
+        IMAGE_COL,
+        /**
+         * TITLE_COL represents the title column.
+         */
+        TITLE_COL,
+        /**
+         * FULL_NAME_COL represents the full name column.
+         */
+        FULL_NAME_COL,
+        /**
+         * FIRST_NAME_COL represents the first name column.
+         */
+        FIRST_NAME_COL,
+        /**
+         * LAST_NAME_COL represents the last name column.
+         */
+        LAST_NAME_COL;
+    }
 
     /**
      * OutputCSVStage constructor.
@@ -34,11 +59,6 @@ public class OutputCSVStage extends FlexiStage {
     }
 
     private GridPane createGrid(OutputCSV csv) {
-        final int imageCol = 0;
-        final int titleCol = 1;
-        final int fullNameCol = 2;
-        final int firstNameCol = 3;
-        final int lastNameCol = 4;
         final int gridGap = 5;
         final int padding = 10;
 
@@ -52,11 +72,11 @@ public class OutputCSVStage extends FlexiStage {
         for (FlexiBean bean : beans.getBeans()) {
             Logger.debug(BuilderGUI.buildLogMessage(
                 "OutputCSVStage creating grid line for bean: ", bean.toString()));
-            grid.add(new Text(bean.getFilename()), imageCol, row);
-            grid.add(new Text(bean.getTitle()), titleCol, row);
-            grid.add(new Text(bean.getFullName()), fullNameCol, row);
-            grid.add(new Text(bean.getFirstName()), firstNameCol, row);
-            grid.add(new Text(bean.getLastName()), lastNameCol, row++);
+            grid.add(new Text(bean.getFilename()), Columns.IMAGE_COL.ordinal(), row);
+            grid.add(new Text(bean.getTitle()), Columns.TITLE_COL.ordinal(), row);
+            grid.add(new Text(bean.getFullName()), Columns.FULL_NAME_COL.ordinal(), row);
+            grid.add(new Text(bean.getFirstName()), Columns.FIRST_NAME_COL.ordinal(), row);
+            grid.add(new Text(bean.getLastName()), Columns.LAST_NAME_COL.ordinal(), row++);
         }
         return grid;
     }
