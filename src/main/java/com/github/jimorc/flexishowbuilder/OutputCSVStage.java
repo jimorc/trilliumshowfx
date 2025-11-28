@@ -46,6 +46,9 @@ public class OutputCSVStage extends FlexiStage {
         LAST_NAME_COL;
     }
 
+    private static final Font HEADER_FONT = Font.font("System", FontWeight.BOLD, 12);
+    private static final Font NORMAL_FONT = Font.font("System", FontWeight.NORMAL, 12);
+
     /**
      * OutputCSVStage constructor.
      * @param csv the OutputCSV object to display.
@@ -70,32 +73,8 @@ public class OutputCSVStage extends FlexiStage {
         grid.setVgap(2);
         grid.setHgap(gridGap);
 
-        Text t = new Text("some text");
-        Font font = t.getFont();
-        double fontSize = font.getSize();
-        Font headerFont = Font.font(font.getFamily(), FontWeight.BOLD, fontSize);
         FlexiBeans beans = csv.getBeans();
-        Text imageHeader = new Text("Image");
-        imageHeader.setFont(headerFont);
-        imageHeader.setFill(Color.BLUE);
-        grid.add(imageHeader, Columns.IMAGE_COL.ordinal(), 0);
-        Text titleHeader = new Text("Title");
-        titleHeader.setFont(headerFont);
-        titleHeader.setFill(Color.BLUE);
-        grid.add(titleHeader, Columns.TITLE_COL.ordinal(), 0);
-        Text fullNameHeader = new Text("Full Name");
-        fullNameHeader.setFont(headerFont);
-        fullNameHeader.setFill(Color.BLUE);
-        grid.add(fullNameHeader, Columns.FULL_NAME_COL.ordinal(), 0);
-        Text firstNameHeader = new Text("First Name");
-        firstNameHeader.setFont(headerFont);
-        firstNameHeader.setFill(Color.BLUE);
-        grid.add(firstNameHeader, Columns.FIRST_NAME_COL.ordinal(), 0);
-        Text lastNameHeader = new Text("Last Name");
-        lastNameHeader.setFont(headerFont);
-        lastNameHeader.setFill(Color.BLUE);
-        grid.add(lastNameHeader, Columns.LAST_NAME_COL.ordinal(), 0);
-
+        createHeaderCellRow(grid, beans.getBeans().get(0));
         for (int row = 1; row < beans.getBeans().size(); row++) {
             FlexiBean bean = beans.getBeans().get(row);
             Logger.debug(BuilderGUI.buildLogMessage(
@@ -116,6 +95,37 @@ public class OutputCSVStage extends FlexiStage {
             grid.add(new Text(bean.getLastName()), Columns.LAST_NAME_COL.ordinal(), row);
         }
         return grid;
+    }
+
+    private void createHeaderCellRow(GridPane grid, FlexiBean b) {
+        HBox headerCell = createGridCellBox(b.getFilename(), 
+            HEADER_FONT, Color.BLUE);
+        grid.add(headerCell, Columns.IMAGE_COL.ordinal(), 0);
+        headerCell = createGridCellBox(b.getTitle(),
+            HEADER_FONT, Color.BLUE);
+        grid.add(headerCell, Columns.TITLE_COL.ordinal(), 0);
+        headerCell = createGridCellBox(b.getFullName(),
+            HEADER_FONT, Color.BLUE);
+        grid.add(headerCell, Columns.FULL_NAME_COL.ordinal(), 0);
+        headerCell = createGridCellBox(b.getFirstName(),
+            HEADER_FONT, Color.BLUE);
+        grid.add(headerCell, Columns.FIRST_NAME_COL.ordinal(), 0);
+        headerCell = createGridCellBox(b.getLastName(),
+            HEADER_FONT, Color.BLUE);
+        grid.add(headerCell, Columns.LAST_NAME_COL.ordinal(), 0);
+
+    }
+
+    private HBox createGridCellBox(String text, Font font, Color textColor) {
+        Text t = new Text(text);
+        t.setFont(font);
+        t.setFill(textColor);
+        HBox box = new HBox(t);
+        box.setOnMouseEntered(e -> 
+            box.setStyle("-fx-background-color: lightblue;"));
+        box.setOnMouseExited(e -> 
+            box.setStyle("-fx-background-color: transparent;"));
+        return box;
     }
 
     private HBox createButtonBox(OutputCSV csv, String dir) {
