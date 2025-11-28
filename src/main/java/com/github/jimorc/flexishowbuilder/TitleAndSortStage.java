@@ -4,7 +4,6 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
@@ -29,7 +28,6 @@ public class TitleAndSortStage extends FlexiStage {
     private RadioButton alphaLastFirstButton;
     private RadioButton alphaFullRevButton;
     private RadioButton alphaLastFirstRevButton;
-    private CheckBox lastNameCheckBox;
 
     /**
      * Constructor.
@@ -46,8 +44,7 @@ public class TitleAndSortStage extends FlexiStage {
      * @return data set in stage object.
      */
     public TitleAndSortData getData() {
-        TitleAndSortData data = new TitleAndSortData(titleArea.getText(), sortOrder,
-            lastNameCheckBox.isSelected());
+        TitleAndSortData data = new TitleAndSortData(titleArea.getText(), sortOrder);
         return data;
     }
 
@@ -76,15 +73,12 @@ public class TitleAndSortStage extends FlexiStage {
         createAlphaFullRevButton(vBoxInsets);
         createAlphaLastFirstRevButton(vBoxInsets);
 
-        Label lastNameLabel = createLastNameLabel(fontSize, vBoxInsets);
-        createLastNameCheckBox(vBoxInsets);
-
         HBox buttonBox = createButtonBox(buttonTopMargin, buttonRightMargin, buttonBottomMargin, buttonLeftMargin);
 
         VBox vbox = new VBox(spacing);
         vbox.getChildren().addAll(titleLabel, titleArea, sortLabel, noneButton,
             alphaFullButton, alphaLastFirstButton, alphaFullRevButton, alphaLastFirstRevButton,
-            lastNameLabel, lastNameCheckBox, buttonBox);
+            buttonBox);
         return vbox;
     }
 
@@ -109,22 +103,6 @@ public class TitleAndSortStage extends FlexiStage {
             this.close();
         });
         return gen;
-    }
-
-    private void createLastNameCheckBox(Insets insets) {
-        lastNameCheckBox = new CheckBox("Show last name as Initial");
-        lastNameCheckBox.selectedProperty().set(true);
-        Tooltip lastNameTooltip = new Tooltip("If checked, the person's last name will be shown "
-            + "as an initial in the\nperson slides. If not selected, the full last name will be shown.");
-        lastNameCheckBox.setTooltip(lastNameTooltip);
-        VBox.setMargin(lastNameCheckBox, insets);
-    }
-
-    private Label createLastNameLabel(final int fontSize, final Insets insets) {
-        Label lastNameLabel = new Label("Last name in persion slides");
-        lastNameLabel.setFont(Font.font("Arial", FontWeight.BOLD, fontSize));
-        VBox.setMargin(lastNameLabel, insets);
-        return lastNameLabel;
     }
 
     private Label createTitleLabel(final Font labelFont, final Insets insets) {
@@ -227,7 +205,6 @@ public class TitleAndSortStage extends FlexiStage {
      * @return TitleAndSortData object for the settings in this stage.
      */
     public TitleAndSortData getSortData() {
-        return new TitleAndSortData(titleArea.getText(), sortOrder,
-            lastNameCheckBox.isSelected());
+        return new TitleAndSortData(titleArea.getText(), sortOrder);
     }
 }

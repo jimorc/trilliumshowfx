@@ -127,11 +127,7 @@ public class BuilderGUI extends Application {
                 String fName = name.replaceAll(" ", "_");
                 String fileName = dir + "/" + fName + ".jpg";
                 String personTitle = "";
-                if (data.isLastNameAsInitial()) {
-                    personTitle = person.getFirstPlusInitial();
-                } else {
-                    personTitle = person.getFullName();
-                }
+                personTitle = person.getFullName();
                 TitleImage.generateTitleImage(personTitle, fileName);
                 FlexiBean personTitleBean = new FlexiBean();
                 personTitleBean.setFilename(personTitle + ".jpg");
