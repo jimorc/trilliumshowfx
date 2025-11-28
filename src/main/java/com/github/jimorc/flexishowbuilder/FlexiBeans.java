@@ -72,7 +72,9 @@ public class FlexiBeans {
     }
 
     /**
-     * Get the list of Person objects represented by the FlexiBean objects.
+     * Get the list of Person objects represented by the FlexiBean objects. The list is
+     * in the order that the persons first appear in the FlexiBean list, and contains
+     * no duplicates.
      * @return list of Person objects
      */
     public List<Person> getPersons() {
@@ -81,6 +83,21 @@ public class FlexiBeans {
             Person person = new Person(bean.getFirstName(), bean.getLastName());
             if (!fullNames.contains(person)) {
                 fullNames.add(new Person(bean.getFirstName(), bean.getLastName()));
+            }
+        }
+        return fullNames;
+    }
+
+    /**
+     * Get the sorted list of unique full names represented by the FlexiBean objects.
+     * @return sorted list of unique full names
+     */
+    public ArrayList<String> getSortedFullNames() {
+        ArrayList<String> fullNames = new ArrayList<String>();
+        for (FlexiBean bean : beans) {
+            String fullName = bean.getFullName();
+            if (!fullNames.contains(fullName)) {
+                fullNames.add(fullName);
             }
         }
         return fullNames;

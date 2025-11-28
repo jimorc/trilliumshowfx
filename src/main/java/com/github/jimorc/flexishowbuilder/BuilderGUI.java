@@ -113,7 +113,7 @@ public class BuilderGUI extends Application {
             out.appendBean(titleBean);
 
             csv.getBeans().sort(data.getOrder());
-            ArrayList<String> fullNames = csv.getSortedFullNames();
+            ArrayList<String> fullNames = csv.getBeans().getSortedFullNames();
             for (String name : fullNames) {
                 Person person = csv.getPerson(name);
                 String fName = name.replaceAll(" ", "_");
@@ -130,6 +130,8 @@ public class BuilderGUI extends Application {
                 out.appendBean(personTitleBean);
                 for (FlexiBean bean: csv.getPersonBeans(name).getBeans()) {
                     out.appendBean(bean);
+                    Logger.debug(BuilderGUI.buildLogMessage(
+                        "Appended bean for ", name, ": ", bean.toString()));
                 }
             }
             out.appendBean(titleBean);

@@ -50,9 +50,13 @@ public class Person {
     public String getFirstPlusInitial() {
         return firstName + " " + lastName.substring(0, 1) + ".";
     }
+
+    /**
+     * toString method returns the person's full name.
+     * @return the person's full name
+     */
+    @Override
+    public String toString() {
+        return getFullName();
+    }
 }
-
-
-
-
-

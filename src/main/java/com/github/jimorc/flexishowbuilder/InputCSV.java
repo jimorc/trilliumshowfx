@@ -237,7 +237,14 @@ public final class InputCSV {
      */
     public FlexiBeans getPersonBeans(String fullName) throws CSVException {
         if (fullNameMap.containsKey(fullName)) {
-            return fullNameMap.get(fullName);
+            FlexiBeans beans =  fullNameMap.get(fullName);
+            Logger.debug(BuilderGUI.buildLogMessage(
+                "Retrieved FlexiBeans for ", fullName, ": ", beans.toString()));
+            for (FlexiBean bean : beans.getBeans()) {
+                Logger.debug(BuilderGUI.buildLogMessage(
+                    "Bean: ", bean.toString()));
+            }
+            return beans;
         } else {
             Logger.error(BuilderGUI.buildLogMessage(
                 "There are no CSVLines for: ", fullName));
@@ -251,15 +258,12 @@ public final class InputCSV {
         for (FlexiBean bean: flexiBeans.getBeans()) {
             String fullName = bean.getFullName();
             if (!fullNameMap.containsKey(fullName)) {
+                fullNameMap.put(fullName, new FlexiBeans());
                 Logger.debug(BuilderGUI.buildLogMessage(
                     "Adding ", fullName, " to hash map"));
-                FlexiBeans flexiBeansForName = fullNameMap.get(fullName);
-                if (flexiBeansForName == null) {
-                    flexiBeansForName = new FlexiBeans();
-                }
-                flexiBeansForName.append(bean);
-                fullNameMap.put(fullName, flexiBeansForName);
             }
+            FlexiBeans flexiBeansForName = fullNameMap.get(fullName);
+            flexiBeansForName.append(bean);
         }
         Logger.debug(BuilderGUI.buildLogMessage(
             "fullNameHashMap: ", fullNameMap.toString()));
