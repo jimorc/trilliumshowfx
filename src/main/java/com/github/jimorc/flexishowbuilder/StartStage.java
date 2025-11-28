@@ -29,13 +29,6 @@ public class StartStage extends FlexiStage {
             loadCSVFile();
             Logger.trace("Closing StartStage");
             this.close();
-            try {
-                iCSV.validateCSVFile();
-            } catch (CSVException ce) {
-                Logger.error(BuilderGUI.buildLogMessage(
-                    "validateCSVFile threw CSVException: ", ce.getMessage()));
-                BuilderGUI.handleCSVException(ce);
-            }
         });
         QuitButton quit = new QuitButton();
         VBox box = new VBox(spacing);

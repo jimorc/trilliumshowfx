@@ -296,6 +296,7 @@ public final class InputCSV {
      * @throws CSVException
      */
     public Exception validateCSVFile() throws CSVException {
+        Logger.trace("In InputCSV.validateCSVFile");
         if (flexiBeans.getBeans().isEmpty()) {
             throw new CSVException("No data found in CSV file " + getFileName());
         }
@@ -306,6 +307,8 @@ public final class InputCSV {
             for (String img : missingImages) {
                 msg += img + "\n";
             }
+            msg += "\nProgram cannot continue.\nFix this and try again.";
+            Logger.error(msg);
             throw new CSVException(msg);
         }
         return null; // no errors found

@@ -21,6 +21,14 @@ public class BuilderGUI extends Application {
         startStage.showAndWait();
         Logger.trace("Have returned from StartStage.");
         InputCSV iCSV = startStage.getInputCSV();
+        try {
+            iCSV.validateCSVFile();
+        } catch (CSVException ce) {
+            Logger.error(BuilderGUI.buildLogMessage(
+                "validateCSVFile threw CSVException: ", ce.getMessage()));
+            BuilderGUI.handleCSVException(ce);
+        }
+
         TitleAndSortStage tsStage = new TitleAndSortStage();
         tsStage.showAndWait();
         TitleAndSortData data = tsStage.getData();
@@ -50,8 +58,8 @@ public class BuilderGUI extends Application {
         String msg = csve.getMessage();
         alert.setAlertType(AlertType.ERROR);
         alert.setTitle("CSV File Error");
-        alert.setHeaderText("Error processing CSV file");
-        alert.setContentText(msg + "\nProgram will now terminate.");
+        alert.setHeaderText(msg);
+        alert.setContentText("Click OK to terminate program.");
         alert.showAndWait();
         System.exit(1);
     }
@@ -61,7 +69,7 @@ public class BuilderGUI extends Application {
      * @param ioe the IOException to report.
      * @param csv the InputCSV object that the exception occurred on.
      */
-    protected static void handleIOException(IOException ioe, InputCSV csv) {
+    protected static void handleIOException(IOException ioe, InputCSV csv) { // no return
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("CSV File Error");
         alert.setHeaderText("IOException attempting to read CSV file: "
@@ -90,7 +98,7 @@ public class BuilderGUI extends Application {
      * @throws ExceptionInInitializerError
      */
     public static void handleBadHeaderException(BadHeaderException bhe)
-            throws ExceptionInInitializerError {
+            throws ExceptionInInitializerError { // no return
         Alert alert = new Alert(AlertType.ERROR);
         alert.setTitle("CSV Header Error");
         alert.setHeaderText("Bad CSV Header");
