@@ -75,30 +75,12 @@ public class OutputCSVStage extends FlexiStage {
 
         FlexiBeans beans = csv.getBeans();
         createHeaderCellRow(grid, beans.getBeans().get(0));
-        for (int row = 1; row < beans.getBeans().size(); row++) {
-            FlexiBean bean = beans.getBeans().get(row);
-            Logger.debug(BuilderGUI.buildLogMessage(
-                "OutputCSVStage creating grid line for bean: ", bean.toString()));
-            Text fNameText = new Text(bean.getFilename());
-            if (bean.getTitle() == null
-                    && bean.getFullName() == null
-                    && bean.getFirstName() == null
-                    && bean.getLastName() == null) {
-                fNameText.setFill(Color.DARKORANGE);
-            } else {
-                fNameText.setFill(Color.BLACK);
-            }
-            grid.add(fNameText, Columns.IMAGE_COL.ordinal(), row);
-            grid.add(new Text(bean.getTitle()), Columns.TITLE_COL.ordinal(), row);
-            grid.add(new Text(bean.getFullName()), Columns.FULL_NAME_COL.ordinal(), row);
-            grid.add(new Text(bean.getFirstName()), Columns.FIRST_NAME_COL.ordinal(), row);
-            grid.add(new Text(bean.getLastName()), Columns.LAST_NAME_COL.ordinal(), row);
-        }
+        createCellRows(grid, beans);
         return grid;
     }
 
     private void createHeaderCellRow(GridPane grid, FlexiBean b) {
-        HBox headerCell = createGridCellBox(b.getFilename(), 
+        HBox headerCell = createGridCellBox(b.getFilename(),
             HEADER_FONT, Color.BLUE);
         grid.add(headerCell, Columns.IMAGE_COL.ordinal(), 0);
         headerCell = createGridCellBox(b.getTitle(),
@@ -113,7 +95,39 @@ public class OutputCSVStage extends FlexiStage {
         headerCell = createGridCellBox(b.getLastName(),
             HEADER_FONT, Color.BLUE);
         grid.add(headerCell, Columns.LAST_NAME_COL.ordinal(), 0);
+    }
 
+    private void createCellRows(GridPane grid, FlexiBeans beans) {
+        for (int row = 1; row < beans.getBeans().size(); row++) {
+            FlexiBean bean = beans.getBeans().get(row);
+            Logger.debug(BuilderGUI.buildLogMessage(
+                "OutputCSVStage creating grid line for bean: ", bean.toString()));
+            // default color is black.
+            Color color = Color.BLACK;
+            // color is dark orange if bean contains only file name field.
+            if (bean.getTitle() == null
+                    && bean.getFullName() == null
+                    && bean.getFirstName() == null
+                    && bean.getLastName() == null) {
+                color = Color.DARKORANGE;
+            }
+
+            HBox box = createGridCellBox(beans.getBeans().get(row).getFilename(),
+                NORMAL_FONT, color);
+            grid.add(box, Columns.IMAGE_COL.ordinal(), row);
+            box = createGridCellBox(beans.getBeans().get(row).getTitle(),
+                NORMAL_FONT, color);
+            grid.add(box, Columns.TITLE_COL.ordinal(), row);
+            box = createGridCellBox(beans.getBeans().get(row).getFullName(),
+                NORMAL_FONT, color);
+            grid.add(box, Columns.FULL_NAME_COL.ordinal(), row);
+            box = createGridCellBox(beans.getBeans().get(row).getFirstName(),
+                NORMAL_FONT, color);
+            grid.add(box, Columns.FIRST_NAME_COL.ordinal(), row);
+            box = createGridCellBox(beans.getBeans().get(row).getLastName(),
+                NORMAL_FONT, color);
+            grid.add(box, Columns.LAST_NAME_COL.ordinal(), row);
+        }
     }
 
     private HBox createGridCellBox(String text, Font font, Color textColor) {
@@ -121,9 +135,9 @@ public class OutputCSVStage extends FlexiStage {
         t.setFont(font);
         t.setFill(textColor);
         HBox box = new HBox(t);
-        box.setOnMouseEntered(e -> 
+        box.setOnMouseEntered(e ->
             box.setStyle("-fx-background-color: lightblue;"));
-        box.setOnMouseExited(e -> 
+        box.setOnMouseExited(e ->
             box.setStyle("-fx-background-color: transparent;"));
         return box;
     }
