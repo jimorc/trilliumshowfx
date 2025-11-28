@@ -10,6 +10,9 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import org.tinylog.Logger;
 
@@ -59,24 +62,58 @@ public class OutputCSVStage extends FlexiStage {
     }
 
     private GridPane createGrid(OutputCSV csv) {
-        final int gridGap = 0;
+        final int gridGap = 10;
         final int padding = 10;
 
         GridPane grid = new GridPane();
         grid.setPadding(new Insets(padding));
-        grid.setVgap(gridGap);
+        grid.setVgap(2);
         grid.setHgap(gridGap);
 
+        Text t = new Text("some text");
+        Font font = t.getFont();
+        double fontSize = font.getSize();
+        Font headerFont = Font.font(font.getFamily(), FontWeight.BOLD, fontSize);
         FlexiBeans beans = csv.getBeans();
-        int row = 0;
-        for (FlexiBean bean : beans.getBeans()) {
+        Text imageHeader = new Text("Image");
+        imageHeader.setFont(headerFont);
+        imageHeader.setFill(Color.BLUE);
+        grid.add(imageHeader, Columns.IMAGE_COL.ordinal(), 0);
+        Text titleHeader = new Text("Title");
+        titleHeader.setFont(headerFont);
+        titleHeader.setFill(Color.BLUE);
+        grid.add(titleHeader, Columns.TITLE_COL.ordinal(), 0);
+        Text fullNameHeader = new Text("Full Name");
+        fullNameHeader.setFont(headerFont);
+        fullNameHeader.setFill(Color.BLUE);
+        grid.add(fullNameHeader, Columns.FULL_NAME_COL.ordinal(), 0);
+        Text firstNameHeader = new Text("First Name");
+        firstNameHeader.setFont(headerFont);
+        firstNameHeader.setFill(Color.BLUE);
+        grid.add(firstNameHeader, Columns.FIRST_NAME_COL.ordinal(), 0);
+        Text lastNameHeader = new Text("Last Name");
+        lastNameHeader.setFont(headerFont);
+        lastNameHeader.setFill(Color.BLUE);
+        grid.add(lastNameHeader, Columns.LAST_NAME_COL.ordinal(), 0);
+
+        for (int row = 1; row < beans.getBeans().size(); row++) {
+            FlexiBean bean = beans.getBeans().get(row);
             Logger.debug(BuilderGUI.buildLogMessage(
                 "OutputCSVStage creating grid line for bean: ", bean.toString()));
-            grid.add(new Text(bean.getFilename()), Columns.IMAGE_COL.ordinal(), row);
+            Text fNameText = new Text(bean.getFilename());
+            if (bean.getTitle() == null
+                    && bean.getFullName() == null
+                    && bean.getFirstName() == null
+                    && bean.getLastName() == null) {
+                fNameText.setFill(Color.DARKORANGE);
+            } else {
+                fNameText.setFill(Color.BLACK);
+            }
+            grid.add(fNameText, Columns.IMAGE_COL.ordinal(), row);
             grid.add(new Text(bean.getTitle()), Columns.TITLE_COL.ordinal(), row);
             grid.add(new Text(bean.getFullName()), Columns.FULL_NAME_COL.ordinal(), row);
             grid.add(new Text(bean.getFirstName()), Columns.FIRST_NAME_COL.ordinal(), row);
-            grid.add(new Text(bean.getLastName()), Columns.LAST_NAME_COL.ordinal(), row++);
+            grid.add(new Text(bean.getLastName()), Columns.LAST_NAME_COL.ordinal(), row);
         }
         return grid;
     }
