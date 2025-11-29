@@ -1,6 +1,9 @@
 package com.github.jimorc.flexishowbuilder;
 
+import java.util.ArrayList;
+import java.util.List;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -117,10 +120,34 @@ public class CsvGrid extends GridPane {
         t.setFont(font);
         t.setFill(textColor);
         HBox box = new HBox(t);
-        box.setOnMouseEntered(e ->
-            box.setStyle("-fx-background-color: lightblue;"));
-        box.setOnMouseExited(e ->
-            box.setStyle("-fx-background-color: transparent;"));
+        box.setOnMouseEntered(e -> {
+            Node sourceNode = (Node) e.getSource();
+            List<HBox> nodes = getNodesInSameRow(sourceNode);
+            for (HBox n: nodes) {
+                n.setStyle("-fx-background-color: lightblue;");
+            }
+        });
+        box.setOnMouseExited(e -> {
+            Node sourceNode = (Node) e.getSource();
+            List<HBox> nodes = getNodesInSameRow(sourceNode);
+            for (HBox n: nodes) {
+                n.setStyle("-fx-background-color: transparent;");
+            }
+        });
         return box;
+    }
+
+    private List<HBox> getNodesInSameRow(Node sourceNode) {
+        Logger.trace("In getNodesInSameRow");
+        List<HBox> nodes = new ArrayList<HBox>();
+        Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+        for (Node node: getChildren()) {
+            Integer rowIndex = GridPane.getRowIndex(node);
+            if (sourceIndex == rowIndex) {
+                Logger.debug("Adding ", node.toString(), " to nodes in row");
+                nodes.add((HBox) node);
+            }
+        }
+        return nodes;
     }
 }
