@@ -6,6 +6,8 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.file.Path;
+import javafx.scene.Scene;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,6 +29,8 @@ public class TitleImageTests {
         } catch (IOException e) {
             fail("Exception thrown: " + e.getMessage());
         }
+        stage.setScene(new Scene(new HBox()));
+        stage.show();
     }
 
     @Test
