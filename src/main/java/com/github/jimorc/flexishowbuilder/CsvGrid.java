@@ -1,7 +1,11 @@
 package com.github.jimorc.flexishowbuilder;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
@@ -145,24 +149,10 @@ public class CsvGrid extends GridPane {
             Node sourceNode = (Node) e.getSource();
             Integer sourceIndex = GridPane.getRowIndex(sourceNode);
             if (e.isPrimaryButtonDown()) {
-                oldSelStart = selStart;
-                oldSelEnd = selEnd;
-                if (e.isShiftDown()) {
-                    if (selStart == NO_SELECTION) {
-                        selStart = sourceIndex;
-                    }
-                    selEnd = sourceIndex;
-                     if (selStart > selEnd) {
-                        Integer temp = selStart;
-                        selStart = selEnd;
-                        selEnd = temp;
-                    }
-                } else {
-                    selStart = sourceIndex;
-                    selEnd = sourceIndex;
-                }
-                Logger.debug("Shift down: {}->{} changed to {}->{}",
-                    oldSelStart, oldSelEnd, selStart, selEnd);
+                processPrimaryButtonDown(e, sourceIndex);
+            } else if (e.isSecondaryButtonDown()) {
+                ContextMenu cMenu = createContextMenu(e);
+                cMenu.show(this, Side.LEFT, e.getSceneX(), e.getSceneY());
             }
         });
         box.setOnMouseReleased(e -> {
@@ -174,9 +164,38 @@ public class CsvGrid extends GridPane {
             for (Integer i = selStart; i <= selEnd; i++) {
                 setRowBackground(i, "lightblue");
             }
-             Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
+            Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
         });
         return box;
+    }
+
+    private void processPrimaryButtonDown(MouseEvent e, Integer sourceIndex) {
+        oldSelStart = selStart;
+        oldSelEnd = selEnd;
+        if (e.isShiftDown()) {
+            processShiftDown(sourceIndex);
+        } else {
+            selStart = sourceIndex;
+            selEnd = sourceIndex;
+        }
+        Logger.debug("processPrimaryButtonDown: {}->{} changed to {}->{}",
+            oldSelStart, oldSelEnd, selStart, selEnd);
+    }
+
+    private void processShiftDown(Integer sourceIndex) {
+        if (selStart == NO_SELECTION) {
+            selStart = sourceIndex;
+        }
+        selEnd = sourceIndex;
+        sortStartEnd();
+    }
+
+    private void sortStartEnd() {
+        if (selStart > selEnd) {
+            Integer temp = selStart;
+            selStart = selEnd;
+            selEnd = temp;
+        }
     }
 
     private void setRowBackground(Integer row, String color) {
@@ -187,5 +206,28 @@ public class CsvGrid extends GridPane {
                 node.setStyle(col);
             }
         }
+    }
+
+    private ContextMenu createContextMenu(MouseEvent e) {
+        ContextMenu cm = new ContextMenu();
+        Node sourceNode = (Node) e.getSource();
+        Integer rowIndex = GridPane.getRowIndex(sourceNode);
+        if (rowIndex >= selStart && rowIndex <= selEnd) {
+            MenuItem deselect = new MenuItem("Deselect");
+            deselect.setOnAction(ev -> {
+                oldSelStart = selStart;
+                oldSelEnd = selEnd;
+                selStart = NO_SELECTION;
+                selEnd = NO_SELECTION;
+                Logger.debug("In deselect.setOnAction runLater:");
+                Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
+                Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
+                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                    setRowBackground(row, "transparent");
+                }
+            });
+            cm.getItems().add(deselect);
+        }
+        return cm;
     }
 }
