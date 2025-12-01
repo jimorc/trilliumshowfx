@@ -1,7 +1,5 @@
 package com.github.jimorc.flexishowbuilder;
 
-import java.util.ArrayList;
-import java.util.List;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.layout.GridPane;
@@ -44,6 +42,12 @@ public class CsvGrid extends GridPane {
 
     private static final Font HEADER_FONT = Font.font("System", FontWeight.BOLD, 12);
     private static final Font NORMAL_FONT = Font.font("System", FontWeight.NORMAL, 12);
+    private static final Integer NO_SELECTION = -1;
+
+    private Integer selStart = NO_SELECTION;
+    private Integer selEnd = NO_SELECTION;
+    private Integer oldSelStart = NO_SELECTION;
+    private Integer oldSelEnd = NO_SELECTION;
 
     /**
      * Constructor.
@@ -121,33 +125,78 @@ public class CsvGrid extends GridPane {
         t.setFill(textColor);
         HBox box = new HBox(t);
         box.setOnMouseEntered(e -> {
+            Logger.trace("In setOnMouseEntered, selectede = {}->{}", selStart, selEnd);
             Node sourceNode = (Node) e.getSource();
-            List<HBox> nodes = getNodesInSameRow(sourceNode);
-            for (HBox n: nodes) {
-                n.setStyle("-fx-background-color: lightblue;");
+            Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+            if (sourceIndex < selStart || sourceIndex > selEnd) {
+                highlightRowNodesNotSelected(sourceIndex);
             }
         });
         box.setOnMouseExited(e -> {
+            Logger.trace("In setOnMouseExited, selected = {}->{}", selStart, selEnd);
             Node sourceNode = (Node) e.getSource();
-            List<HBox> nodes = getNodesInSameRow(sourceNode);
-            for (HBox n: nodes) {
-                n.setStyle("-fx-background-color: transparent;");
+            Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+            if (sourceIndex < selStart || sourceIndex > selEnd) {
+            clearRowNodes(sourceIndex);
             }
+        });
+        box.setOnMousePressed(e -> {
+            Logger.trace("In setOnMousePressed, selected = {}->{}", selStart, selEnd);
+            Node sourceNode = (Node) e.getSource();
+            Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+            if (e.isPrimaryButtonDown()) {
+                if (e.isShiftDown()) {
+                    oldSelStart = selStart;
+                    oldSelEnd = selEnd;
+                    selEnd = sourceIndex;
+                    if (selStart > selEnd) {
+                        Integer temp = selStart;
+                        selStart = selEnd;
+                        selEnd = temp;
+                    }
+                } else {
+                    selStart = sourceIndex;
+                    selEnd = sourceIndex;
+                }
+            }
+        });
+        box.setOnMouseReleased(e -> {
+            Logger.debug("In setOnMouseReleased, selected = {}->{}", selStart, selEnd);
+            for (Integer i = oldSelStart; i <= oldSelEnd; i++) {
+                clearRowNodes(i);
+            }
+            for (Integer i = selStart; i <= selEnd; i++) {
+                highlightRowNodesSelected(i);
+            }
+             Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
         });
         return box;
     }
 
-    private List<HBox> getNodesInSameRow(Node sourceNode) {
-        Logger.trace("In getNodesInSameRow");
-        List<HBox> nodes = new ArrayList<HBox>();
-        Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+    private void highlightRowNodesSelected(Integer row) {
         for (Node node: getChildren()) {
             Integer rowIndex = GridPane.getRowIndex(node);
-            if (sourceIndex == rowIndex) {
-                Logger.debug("Adding ", node.toString(), " to nodes in row");
-                nodes.add((HBox) node);
+            if (rowIndex == row) {
+                node.setStyle("-fx-background-color: lightBlue");
             }
         }
-        return nodes;
+    }
+
+    private void highlightRowNodesNotSelected(Integer row) {
+        for (Node node: getChildren()) {
+            Integer rowIndex = GridPane.getRowIndex(node);
+            if (rowIndex == row) {
+                node.setStyle("-fx-background-color: lightgreen");
+            }
+        }
+    }
+
+    private void clearRowNodes(Integer row) {
+        for (Node node: getChildren()) {
+            Integer rowIndex = GridPane.getRowIndex(node);
+            if (rowIndex == row) {
+                node.setStyle("-fx-background-color: transparent");
+            }
+        }
     }
 }
