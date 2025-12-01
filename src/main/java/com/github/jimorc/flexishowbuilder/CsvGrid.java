@@ -242,7 +242,7 @@ public class CsvGrid extends GridPane {
                 oldSelEnd = selEnd;
                 selStart = NO_SELECTION;
                 selEnd = NO_SELECTION;
-                Logger.debug("In deselect.setOnAction runLater:");
+                Logger.debug("In deselect.setOnAction");
                 Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
                 Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
                 for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
@@ -255,7 +255,7 @@ public class CsvGrid extends GridPane {
                 oldSelEnd = selEnd;
                 selEnd = rowIndex;
                 sortStartEnd();
-                Logger.debug("In deselect.setOnAction runLater:");
+                Logger.debug("In selectRange.setOnAction");
                 Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
                 Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
                 for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
@@ -270,6 +270,7 @@ public class CsvGrid extends GridPane {
         } else {
             MenuItem select = new MenuItem("Select Single Row");
             select.setOnAction(ev -> {
+                Logger.debug("In select.setOnAction");
                 oldSelStart = selStart;
                 oldSelEnd = selEnd;
                 selStart = rowIndex;
