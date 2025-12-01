@@ -129,7 +129,7 @@ public class CsvGrid extends GridPane {
             Node sourceNode = (Node) e.getSource();
             Integer sourceIndex = GridPane.getRowIndex(sourceNode);
             if (sourceIndex < selStart || sourceIndex > selEnd) {
-                highlightRowNodesNotSelected(sourceIndex);
+                setRowBackground(sourceIndex, "lightgreen");
             }
         });
         box.setOnMouseExited(e -> {
@@ -137,7 +137,7 @@ public class CsvGrid extends GridPane {
             Node sourceNode = (Node) e.getSource();
             Integer sourceIndex = GridPane.getRowIndex(sourceNode);
             if (sourceIndex < selStart || sourceIndex > selEnd) {
-            clearRowNodes(sourceIndex);
+                setRowBackground(sourceIndex, "transparent");
             }
         });
         box.setOnMousePressed(e -> {
@@ -145,11 +145,14 @@ public class CsvGrid extends GridPane {
             Node sourceNode = (Node) e.getSource();
             Integer sourceIndex = GridPane.getRowIndex(sourceNode);
             if (e.isPrimaryButtonDown()) {
+                oldSelStart = selStart;
+                oldSelEnd = selEnd;
                 if (e.isShiftDown()) {
-                    oldSelStart = selStart;
-                    oldSelEnd = selEnd;
+                    if (selStart == NO_SELECTION) {
+                        selStart = sourceIndex;
+                    }
                     selEnd = sourceIndex;
-                    if (selStart > selEnd) {
+                     if (selStart > selEnd) {
                         Integer temp = selStart;
                         selStart = selEnd;
                         selEnd = temp;
@@ -158,44 +161,30 @@ public class CsvGrid extends GridPane {
                     selStart = sourceIndex;
                     selEnd = sourceIndex;
                 }
+                Logger.debug("Shift down: {}->{} changed to {}->{}",
+                    oldSelStart, oldSelEnd, selStart, selEnd);
             }
         });
         box.setOnMouseReleased(e -> {
             Logger.debug("In setOnMouseReleased, selected = {}->{}", selStart, selEnd);
+            Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
             for (Integer i = oldSelStart; i <= oldSelEnd; i++) {
-                clearRowNodes(i);
+                setRowBackground(i, "transparent");
             }
             for (Integer i = selStart; i <= selEnd; i++) {
-                highlightRowNodesSelected(i);
+                setRowBackground(i, "lightblue");
             }
              Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
         });
         return box;
     }
 
-    private void highlightRowNodesSelected(Integer row) {
+    private void setRowBackground(Integer row, String color) {
         for (Node node: getChildren()) {
+            String col = "-fx-background-color: " + color;
             Integer rowIndex = GridPane.getRowIndex(node);
             if (rowIndex == row) {
-                node.setStyle("-fx-background-color: lightBlue");
-            }
-        }
-    }
-
-    private void highlightRowNodesNotSelected(Integer row) {
-        for (Node node: getChildren()) {
-            Integer rowIndex = GridPane.getRowIndex(node);
-            if (rowIndex == row) {
-                node.setStyle("-fx-background-color: lightgreen");
-            }
-        }
-    }
-
-    private void clearRowNodes(Integer row) {
-        for (Node node: getChildren()) {
-            Integer rowIndex = GridPane.getRowIndex(node);
-            if (rowIndex == row) {
-                node.setStyle("-fx-background-color: transparent");
+                node.setStyle(col);
             }
         }
     }
