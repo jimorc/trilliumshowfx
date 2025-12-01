@@ -216,8 +216,27 @@ public class CsvGrid extends GridPane {
         ContextMenu cm = new ContextMenu();
         Node sourceNode = (Node) e.getSource();
         Integer rowIndex = GridPane.getRowIndex(sourceNode);
+        if (selStart != NO_SELECTION) {
+            MenuItem selectRange = new MenuItem("Select Range");
+            selectRange.setOnAction(ev -> {
+                oldSelStart = selStart;
+                oldSelEnd = selEnd;
+                selEnd = rowIndex;
+                sortStartEnd();
+                Logger.debug("In deselect.setOnAction runLater:");
+                Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
+                Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
+                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                    setRowBackground(row, "transparent");
+                }
+                for (Integer row = selStart; row <= selEnd; row++) {
+                    setRowBackground(row, "lightblue");
+                }
+            });
+            cm.getItems().add(selectRange);
+        }
         if (rowIndex >= selStart && rowIndex <= selEnd) {
-            MenuItem deselect = new MenuItem("Deselect");
+            MenuItem deselect = new MenuItem("Deselect All Rows");
             deselect.setOnAction(ev -> {
                 oldSelStart = selStart;
                 oldSelEnd = selEnd;
@@ -230,9 +249,26 @@ public class CsvGrid extends GridPane {
                     setRowBackground(row, "transparent");
                 }
             });
-            cm.getItems().add(deselect);
+            MenuItem selectRange = new MenuItem("Select Row Range");
+            selectRange.setOnAction(ev -> {
+                oldSelStart = selStart;
+                oldSelEnd = selEnd;
+                selEnd = rowIndex;
+                sortStartEnd();
+                Logger.debug("In deselect.setOnAction runLater:");
+                Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
+                Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
+                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                    setRowBackground(row, "transparent");
+                }
+                for (Integer row = selStart; row <= selEnd; row++) {
+                    setRowBackground(row, "lightblue");
+                }
+            });
+
+            cm.getItems().addAll(deselect);
         } else {
-            MenuItem select = new MenuItem("Select");
+            MenuItem select = new MenuItem("Select Single Row");
             select.setOnAction(ev -> {
                 oldSelStart = selStart;
                 oldSelEnd = selEnd;
