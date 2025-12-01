@@ -227,6 +227,19 @@ public class CsvGrid extends GridPane {
                 }
             });
             cm.getItems().add(deselect);
+        } else {
+            MenuItem select = new MenuItem("Select");
+            select.setOnAction(ev -> {
+                oldSelStart = selStart;
+                oldSelEnd = selEnd;
+                selStart = rowIndex;
+                selEnd = rowIndex;
+                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                    setRowBackground(row, "transparent");
+                }
+                setRowBackground(rowIndex, "lightblue");
+            });
+            cm.getItems().add(select);
         }
         return cm;
     }
