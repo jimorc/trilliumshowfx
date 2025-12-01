@@ -52,6 +52,7 @@ public class CsvGrid extends GridPane {
     private Integer selEnd = NO_SELECTION;
     private Integer oldSelStart = NO_SELECTION;
     private Integer oldSelEnd = NO_SELECTION;
+    private ContextMenu displayedMenu = null;
 
     /**
      * Constructor.
@@ -151,8 +152,8 @@ public class CsvGrid extends GridPane {
             if (e.isPrimaryButtonDown()) {
                 processPrimaryButtonDown(e, sourceIndex);
             } else if (e.isSecondaryButtonDown()) {
-                ContextMenu cMenu = createContextMenu(e);
-                cMenu.show(this, Side.LEFT, e.getSceneX(), e.getSceneY());
+                displayedMenu = createContextMenu(e);
+                displayedMenu.show(this, Side.LEFT, e.getSceneX(), e.getSceneY());
             }
         });
         box.setOnMouseReleased(e -> {
@@ -209,6 +210,9 @@ public class CsvGrid extends GridPane {
     }
 
     private ContextMenu createContextMenu(MouseEvent e) {
+        if (displayedMenu != null) {
+            displayedMenu.hide();
+        }
         ContextMenu cm = new ContextMenu();
         Node sourceNode = (Node) e.getSource();
         Integer rowIndex = GridPane.getRowIndex(sourceNode);
