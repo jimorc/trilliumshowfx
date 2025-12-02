@@ -52,7 +52,7 @@ public class CsvGrid extends GridPane {
     private Integer selEnd = NO_SELECTION;
     private Integer oldSelStart = NO_SELECTION;
     private Integer oldSelEnd = NO_SELECTION;
-    private ContextMenu displayedMenu = null;
+    private ContextMenu displayedMenu;
 
     /**
      * Constructor.
@@ -152,6 +152,9 @@ public class CsvGrid extends GridPane {
             if (e.isPrimaryButtonDown()) {
                 processPrimaryButtonDown(e, sourceIndex);
             } else if (e.isSecondaryButtonDown()) {
+                if (displayedMenu != null) {
+                    displayedMenu.hide();
+                }
                 displayedMenu = createContextMenu(e);
                 displayedMenu.show(this, Side.LEFT, e.getSceneX(), e.getSceneY());
             }
@@ -210,9 +213,6 @@ public class CsvGrid extends GridPane {
     }
 
     private ContextMenu createContextMenu(MouseEvent e) {
-        if (displayedMenu != null) {
-            displayedMenu.hide();
-        }
         ContextMenu cm = new ContextMenu();
         Node sourceNode = (Node) e.getSource();
         Integer rowIndex = GridPane.getRowIndex(sourceNode);
@@ -238,7 +238,7 @@ public class CsvGrid extends GridPane {
                 oldSelEnd = selEnd;
                 selEnd = rowIndex;
                 sortStartEnd();
-                Logger.debug("In deselect.setOnAction runLater:");
+                Logger.debug("In selectRange.setOnAction runLater:");
                 Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
                 Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
                 for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
@@ -264,26 +264,9 @@ public class CsvGrid extends GridPane {
                     setRowBackground(row, "transparent");
                 }
             });
-            MenuItem selectRange = new MenuItem("Select Row Range");
-            selectRange.setOnAction(ev -> {
-                oldSelStart = selStart;
-                oldSelEnd = selEnd;
-                selEnd = rowIndex;
-                sortStartEnd();
-                Logger.debug("In selectRange.setOnAction");
-                Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
-                Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
-                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
-                    setRowBackground(row, "transparent");
-                }
-                for (Integer row = selStart; row <= selEnd; row++) {
-                    setRowBackground(row, "lightblue");
-                }
-            });
-
             cm.getItems().addAll(deselect);
         }
-        
+
         return cm;
     }
 }
