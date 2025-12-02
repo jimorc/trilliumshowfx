@@ -216,6 +216,21 @@ public class CsvGrid extends GridPane {
         ContextMenu cm = new ContextMenu();
         Node sourceNode = (Node) e.getSource();
         Integer rowIndex = GridPane.getRowIndex(sourceNode);
+
+        MenuItem select = new MenuItem("Select Single Row");
+        select.setOnAction(ev -> {
+            Logger.debug("In select.setOnAction");
+            oldSelStart = selStart;
+            oldSelEnd = selEnd;
+            selStart = rowIndex;
+            selEnd = rowIndex;
+            for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                setRowBackground(row, "transparent");
+            }
+            setRowBackground(rowIndex, "lightblue");
+        });
+        cm.getItems().add(select);
+
         if (selStart != NO_SELECTION) {
             MenuItem selectRange = new MenuItem("Select Range");
             selectRange.setOnAction(ev -> {
@@ -267,21 +282,8 @@ public class CsvGrid extends GridPane {
             });
 
             cm.getItems().addAll(deselect);
-        } else {
-            MenuItem select = new MenuItem("Select Single Row");
-            select.setOnAction(ev -> {
-                Logger.debug("In select.setOnAction");
-                oldSelStart = selStart;
-                oldSelEnd = selEnd;
-                selStart = rowIndex;
-                selEnd = rowIndex;
-                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
-                    setRowBackground(row, "transparent");
-                }
-                setRowBackground(rowIndex, "lightblue");
-            });
-            cm.getItems().add(select);
         }
+        
         return cm;
     }
 }
