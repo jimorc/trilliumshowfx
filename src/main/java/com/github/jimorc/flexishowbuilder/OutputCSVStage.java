@@ -22,7 +22,7 @@ public class OutputCSVStage extends FlexiStage {
      */
     public OutputCSVStage(OutputCSV csv, String dir) {
         ScrollPane sPane = new ScrollPane();
-        sPane.setContent(new CsvGrid(csv));
+        sPane.setContent(new CsvGrid(csv, dir));
         HBox buttonBox = createButtonBox(csv, dir);
         VBox box = new VBox(sPane, buttonBox);
         Scene scene = new Scene(box);

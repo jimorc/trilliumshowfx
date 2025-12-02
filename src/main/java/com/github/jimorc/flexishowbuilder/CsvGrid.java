@@ -1,9 +1,12 @@
 package com.github.jimorc.flexishowbuilder;
 
+import java.io.File;
 import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.Node;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -14,6 +17,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import org.tinylog.Logger;
 
 /**
@@ -56,17 +61,19 @@ public class CsvGrid extends GridPane {
     private Integer oldSelEnd = NO_SELECTION;
     private ContextMenu displayedMenu;
     private OutputCSV csv;
+    private String dir;
 
     /**
      * Constructor.
      * @param csv the OutputCSV object to display
      */
-    public CsvGrid(OutputCSV csv) {
+    public CsvGrid(OutputCSV csv, String dir) {
         super();
         final int gridGap = 10;
         final int padding = 10;
 
         this.csv = csv;
+        this.dir = dir;
         this.setPadding(new Insets(padding));
         this.setVgap(2);
         this.setHgap(gridGap);
@@ -270,10 +277,38 @@ public class CsvGrid extends GridPane {
             });
             cm.getItems().addAll(deselect);
         }
+        cm.getItems().add(new SeparatorMenuItem());
+        Node srcNode = (Node) e.getSource();
+        Integer sourceIndex = GridPane.getRowIndex(srcNode);
+        MenuItem insert = new MenuItem("Insert Image After");
+        insert.setOnAction(ev -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select Image File to Insert");
+            fileChooser.setInitialDirectory(new File(dir));
+            fileChooser.getExtensionFilters().add(new ExtensionFilter("Jpeg Files", "*.jpg", "*.jpeg"));
+            File imageFile = fileChooser.showOpenDialog(null);
+            if (imageFile != null) {
+                String imageDir = imageFile.getParent();
+                Logger.debug("In insert.setOnAction, imageDir = \'{}\'\n, dir = \'{}\'",
+                    imageDir, dir);
+                if (!imageDir.equals(dir)) {
+                    Alert alert = new Alert(AlertType.ERROR);
+                    alert.setTitle("Invalid Image File");
+                    alert.setHeaderText("The image file must be located in the\n"
+                        + "same directory as all other files.");
+                    alert.setContentText("Click OK to try again.");
+                    alert.showAndWait();
+                    return;
+                }
+                FlexiBean iBean = new FlexiBean();
+                iBean.setFilename(imageFile.getName());
+                int index = sourceIndex.intValue() + 1;
+                csv.getBeans().insert(index, iBean);
+                resetGridRows();
+            }
+        });
+        cm.getItems().add(insert);
         if (selStart != NO_SELECTION) {
-            cm.getItems().add(new SeparatorMenuItem());
-            Node srcNode = (Node) e.getSource();
-            Integer sourceIndex = GridPane.getRowIndex(srcNode);
             if (sourceIndex < selStart || sourceIndex > selEnd) {
                 MenuItem move = new MenuItem("Insert Selected Rows After");
                 move.setOnAction(ev -> {
@@ -313,7 +348,7 @@ public class CsvGrid extends GridPane {
 
     private int getIndex(Integer sourceIndex) {
         int index = sourceIndex.intValue() + 1;
-        if (sourceIndex > selEnd) {
+        if (selEnd != NO_SELECTION && sourceIndex > selEnd) {
             index = sourceIndex.intValue() - selEnd.intValue()
                     + selStart.intValue();
         }
