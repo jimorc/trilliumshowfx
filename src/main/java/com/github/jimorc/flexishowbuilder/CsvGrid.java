@@ -286,31 +286,29 @@ public class CsvGrid extends GridPane {
                     for (FlexiBean b: beans.getBeans()) {
                         csv.getBeans().insert(index++, b);
                     }
-                    oldSelStart = NO_SELECTION;
-                    oldSelEnd = NO_SELECTION;
-                    selStart = NO_SELECTION;
-                    selEnd = NO_SELECTION;
-                    this.getChildren().clear();
-                    createHeaderCellRow(csv.getBeans().getBeans().get(0));
-                    createCellRows(csv.getBeans());
+                    resetGridRows();
                 });
                 cm.getItems().add(move);
             }
             MenuItem delete = new MenuItem("Delete Selected Rows");
             delete.setOnAction(ev -> {
                 deleteBeans(selStart, selEnd);
-                oldSelStart = NO_SELECTION;
-                oldSelEnd = NO_SELECTION;
-                selStart = NO_SELECTION;
-                selEnd = NO_SELECTION;
-                this.getChildren().clear();
-                createHeaderCellRow(csv.getBeans().getBeans().get(0));
-                createCellRows(csv.getBeans());
+                resetGridRows();
             });
             cm.getItems().add(delete);
         }
 
         return cm;
+    }
+
+    private void resetGridRows() {
+        oldSelStart = NO_SELECTION;
+        oldSelEnd = NO_SELECTION;
+        selStart = NO_SELECTION;
+        selEnd = NO_SELECTION;
+        this.getChildren().clear();
+        createHeaderCellRow(csv.getBeans().getBeans().get(0));
+        createCellRows(csv.getBeans());
     }
 
     private int getIndex(Integer sourceIndex) {
