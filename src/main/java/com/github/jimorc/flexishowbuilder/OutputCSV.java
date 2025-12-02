@@ -16,6 +16,13 @@ public class OutputCSV {
     }
 
     /**
+     * deleteAllBeans deletes all beans in the object.
+     */
+    public void deleteAllBeans() {
+        flexiBeans = new FlexiBeans();
+    }
+
+    /**
      * Appends a Bean from the original InputCSV object.
      * @param bean the FlexiBean to append to the OutputCSV object.
      */

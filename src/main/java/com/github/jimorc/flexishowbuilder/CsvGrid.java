@@ -1,10 +1,12 @@
 package com.github.jimorc.flexishowbuilder;
 
+import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -53,6 +55,7 @@ public class CsvGrid extends GridPane {
     private Integer oldSelStart = NO_SELECTION;
     private Integer oldSelEnd = NO_SELECTION;
     private ContextMenu displayedMenu;
+    private OutputCSV csv;
 
     /**
      * Constructor.
@@ -63,6 +66,7 @@ public class CsvGrid extends GridPane {
         final int gridGap = 10;
         final int padding = 10;
 
+        this.csv = csv;
         this.setPadding(new Insets(padding));
         this.setVgap(2);
         this.setHgap(gridGap);
@@ -266,7 +270,33 @@ public class CsvGrid extends GridPane {
             });
             cm.getItems().addAll(deselect);
         }
+        if (selStart != NO_SELECTION) {
+            cm.getItems().add(new SeparatorMenuItem());
+            MenuItem delete = new MenuItem("Delete Selected Rows");
+            delete.setOnAction(ev -> {
+                deleteBeans(selStart, selEnd);
+                oldSelStart = NO_SELECTION;
+                oldSelEnd = NO_SELECTION;
+                selStart = NO_SELECTION;
+                selEnd = NO_SELECTION;
+                this.getChildren().clear();
+                createHeaderCellRow(csv.getBeans().getBeans().get(0));
+                createCellRows(csv.getBeans());
+           });
+            cm.getItems().add(delete);
+        }
 
         return cm;
+    }
+
+    private void deleteBeans(Integer first, Integer last) {
+        List<FlexiBean> allBeans = csv.getBeans().getBeans();
+        csv.deleteAllBeans();
+        for (int i = 0; i < first.intValue(); i++) {
+            csv.getBeans().append(allBeans.get(i));
+        }
+        for (int i = last.intValue() + 1; i < allBeans.size(); i++) {
+            csv.getBeans().append(allBeans.get(i));
+        }
     }
 }
