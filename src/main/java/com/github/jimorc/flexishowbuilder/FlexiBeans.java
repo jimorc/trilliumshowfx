@@ -112,6 +112,15 @@ public class FlexiBeans {
     }
 
     /**
+     * Insert a FlexiBean at the specified location.
+     * @param index the location to insert the bean at
+     * @param bean the FlexiBean to insert.
+     */
+    public void insert(int index, FlexiBean bean) {
+        beans.add(index, bean);
+    }
+
+    /**
      * Sort the FlexiBean objects according to the specified SortOrder.
      * @param order SortOrder to use for sorting
      */

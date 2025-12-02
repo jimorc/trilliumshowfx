@@ -272,6 +272,30 @@ public class CsvGrid extends GridPane {
         }
         if (selStart != NO_SELECTION) {
             cm.getItems().add(new SeparatorMenuItem());
+            Node srcNode = (Node) e.getSource();
+            Integer sourceIndex = GridPane.getRowIndex(srcNode);
+            if (sourceIndex < selStart || sourceIndex > selEnd) {
+                MenuItem move = new MenuItem("Insert Selected Rows After");
+                move.setOnAction(ev -> {
+                    FlexiBeans beans = new FlexiBeans();
+                    for (int i = selStart.intValue(); i <= selEnd.intValue(); i++) {
+                        beans.append(csv.getBeans().getBeans().get(i));
+                    }
+                    deleteBeans(selStart, selEnd);
+                    int index = getIndex(sourceIndex);
+                    for (FlexiBean b: beans.getBeans()) {
+                        csv.getBeans().insert(index++, b);
+                    }
+                    oldSelStart = NO_SELECTION;
+                    oldSelEnd = NO_SELECTION;
+                    selStart = NO_SELECTION;
+                    selEnd = NO_SELECTION;
+                    this.getChildren().clear();
+                    createHeaderCellRow(csv.getBeans().getBeans().get(0));
+                    createCellRows(csv.getBeans());
+                });
+                cm.getItems().add(move);
+            }
             MenuItem delete = new MenuItem("Delete Selected Rows");
             delete.setOnAction(ev -> {
                 deleteBeans(selStart, selEnd);
@@ -282,11 +306,20 @@ public class CsvGrid extends GridPane {
                 this.getChildren().clear();
                 createHeaderCellRow(csv.getBeans().getBeans().get(0));
                 createCellRows(csv.getBeans());
-           });
+            });
             cm.getItems().add(delete);
         }
 
         return cm;
+    }
+
+    private int getIndex(Integer sourceIndex) {
+        int index = sourceIndex.intValue() + 1;
+        if (sourceIndex > selEnd) {
+            index = sourceIndex.intValue() - selEnd.intValue()
+                    + selStart.intValue();
+        }
+        return index;
     }
 
     private void deleteBeans(Integer first, Integer last) {
