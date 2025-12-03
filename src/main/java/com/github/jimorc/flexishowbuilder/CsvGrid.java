@@ -232,22 +232,7 @@ public class CsvGrid extends GridPane {
         cm.getItems().add(select);
 
         if (selStart != NO_SELECTION) {
-            MenuItem selectRange = new MenuItem("Select Range");
-            selectRange.setOnAction(ev -> {
-                oldSelStart = selStart;
-                oldSelEnd = selEnd;
-                selEnd = rowIndex;
-                sortStartEnd();
-                Logger.debug("In selectRange.setOnAction runLater:");
-                Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
-                Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
-                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
-                    setRowBackground(row, "transparent");
-                }
-                for (Integer row = selStart; row <= selEnd; row++) {
-                    setRowBackground(row, "lightblue");
-                }
-            });
+            MenuItem selectRange = createSelectRangeItem(rowIndex);
             cm.getItems().add(selectRange);
         }
         if (rowIndex >= selStart && rowIndex <= selEnd) {
@@ -321,6 +306,26 @@ public class CsvGrid extends GridPane {
         }
 
         return cm;
+    }
+
+    private MenuItem createSelectRangeItem(Integer rowIndex) {
+        MenuItem selectRange = new MenuItem("Select Range");
+        selectRange.setOnAction(ev -> {
+            oldSelStart = selStart;
+            oldSelEnd = selEnd;
+            selEnd = rowIndex;
+            sortStartEnd();
+            Logger.debug("In selectRange.setOnAction runLater:");
+            Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
+            Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
+            for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                setRowBackground(row, "transparent");
+            }
+            for (Integer row = selStart; row <= selEnd; row++) {
+                setRowBackground(row, "lightblue");
+            }
+        });
+        return selectRange;
     }
 
     private MenuItem createSelectItem(Integer rowIndex) {
