@@ -142,20 +142,7 @@ public class CsvGrid extends GridPane {
         HBox box = new HBox(t);
         box.setOnMouseEntered(e -> onMouseEntered(e));
         box.setOnMouseExited(e -> onMouseExited(e));
-        box.setOnMousePressed(e -> {
-            Logger.trace("In setOnMousePressed, selected = {}->{}", selStart, selEnd);
-            Node sourceNode = (Node) e.getSource();
-            Integer sourceIndex = GridPane.getRowIndex(sourceNode);
-            if (e.isPrimaryButtonDown()) {
-                processPrimaryButtonDown(e, sourceIndex);
-            } else if (e.isSecondaryButtonDown()) {
-                if (displayedMenu != null) {
-                    displayedMenu.hide();
-                }
-                displayedMenu = createContextMenu(e);
-                displayedMenu.show(this, Side.LEFT, e.getSceneX(), e.getSceneY());
-            }
-        });
+        box.setOnMousePressed(e -> onMousePressed(e));
         box.setOnMouseReleased(e -> {
             Logger.debug("In setOnMouseReleased, selected = {}->{}", selStart, selEnd);
             Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
@@ -168,6 +155,21 @@ public class CsvGrid extends GridPane {
             Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
         });
         return box;
+    }
+
+    private void onMousePressed(MouseEvent e) {
+        Logger.trace("In setOnMousePressed, selected = {}->{}", selStart, selEnd);
+        Node sourceNode = (Node) e.getSource();
+        Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+        if (e.isPrimaryButtonDown()) {
+            processPrimaryButtonDown(e, sourceIndex);
+        } else if (e.isSecondaryButtonDown()) {
+            if (displayedMenu != null) {
+                displayedMenu.hide();
+            }
+            displayedMenu = createContextMenu(e);
+            displayedMenu.show(this, Side.LEFT, e.getSceneX(), e.getSceneY());
+        }
     }
 
     private void onMouseExited(MouseEvent e) {
