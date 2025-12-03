@@ -66,6 +66,7 @@ public class CsvGrid extends GridPane {
     /**
      * Constructor.
      * @param csv the OutputCSV object to display
+     * @param dir the directory containing all files
      */
     public CsvGrid(OutputCSV csv, String dir) {
         super();
