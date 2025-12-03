@@ -278,8 +278,6 @@ public class CsvGrid extends GridPane {
             cm.getItems().addAll(deselect);
         }
         cm.getItems().add(new SeparatorMenuItem());
-        Node srcNode = (Node) e.getSource();
-        Integer sourceIndex = GridPane.getRowIndex(srcNode);
         MenuItem insert = new MenuItem("Insert Image After");
         insert.setOnAction(ev -> {
             FileChooser fileChooser = new FileChooser();
@@ -302,14 +300,14 @@ public class CsvGrid extends GridPane {
                 }
                 FlexiBean iBean = new FlexiBean();
                 iBean.setFilename(imageFile.getName());
-                int index = sourceIndex.intValue() + 1;
+                int index = rowIndex.intValue() + 1;
                 csv.getBeans().insert(index, iBean);
                 resetGridRows();
             }
         });
         cm.getItems().add(insert);
         if (selStart != NO_SELECTION) {
-            if (sourceIndex < selStart || sourceIndex > selEnd) {
+            if (rowIndex < selStart || rowIndex > selEnd) {
                 MenuItem move = new MenuItem("Insert Selected Rows After");
                 move.setOnAction(ev -> {
                     FlexiBeans beans = new FlexiBeans();
@@ -317,7 +315,7 @@ public class CsvGrid extends GridPane {
                         beans.append(csv.getBeans().getBeans().get(i));
                     }
                     deleteBeans(selStart, selEnd);
-                    int index = getIndex(sourceIndex);
+                    int index = getIndex(rowIndex);
                     for (FlexiBean b: beans.getBeans()) {
                         csv.getBeans().insert(index++, b);
                     }
