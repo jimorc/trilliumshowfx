@@ -143,18 +143,20 @@ public class CsvGrid extends GridPane {
         box.setOnMouseEntered(e -> onMouseEntered(e));
         box.setOnMouseExited(e -> onMouseExited(e));
         box.setOnMousePressed(e -> onMousePressed(e));
-        box.setOnMouseReleased(e -> {
-            Logger.debug("In setOnMouseReleased, selected = {}->{}", selStart, selEnd);
-            Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
-            for (Integer i = oldSelStart; i <= oldSelEnd; i++) {
-                setRowBackground(i, "transparent");
-            }
-            for (Integer i = selStart; i <= selEnd; i++) {
-                setRowBackground(i, "lightblue");
-            }
-            Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
-        });
+        box.setOnMouseReleased(e -> onMouseReleased());
         return box;
+    }
+
+    private void onMouseReleased() {
+        Logger.debug("In setOnMouseReleased, selected = {}->{}", selStart, selEnd);
+        Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
+        for (Integer i = oldSelStart; i <= oldSelEnd; i++) {
+            setRowBackground(i, "transparent");
+        }
+        for (Integer i = selStart; i <= selEnd; i++) {
+            setRowBackground(i, "lightblue");
+        }
+        Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
     }
 
     private void onMousePressed(MouseEvent e) {
