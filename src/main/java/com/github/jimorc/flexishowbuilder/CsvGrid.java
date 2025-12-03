@@ -240,6 +240,42 @@ public class CsvGrid extends GridPane {
             cm.getItems().addAll(deselect);
         }
         cm.getItems().add(new SeparatorMenuItem());
+        MenuItem insert = createInsertImageItem(rowIndex);
+        cm.getItems().add(insert);
+        if (selStart != NO_SELECTION) {
+            if (rowIndex < selStart || rowIndex > selEnd) {
+                MenuItem move = createMoveAfterItem(rowIndex);
+                cm.getItems().add(move);
+            }
+            MenuItem delete = new MenuItem("Delete Selected Rows");
+            delete.setOnAction(ev -> {
+                deleteBeans(selStart, selEnd);
+                resetGridRows();
+            });
+            cm.getItems().add(delete);
+        }
+
+        return cm;
+    }
+
+    private MenuItem createMoveAfterItem(Integer rowIndex) {
+        MenuItem move = new MenuItem("Insert Selected Rows After");
+        move.setOnAction(ev -> {
+            FlexiBeans beans = new FlexiBeans();
+            for (int i = selStart.intValue(); i <= selEnd.intValue(); i++) {
+                beans.append(csv.getBeans().getBeans().get(i));
+            }
+            deleteBeans(selStart, selEnd);
+            int index = getIndex(rowIndex);
+            for (FlexiBean b: beans.getBeans()) {
+                csv.getBeans().insert(index++, b);
+            }
+            resetGridRows();
+        });
+        return move;
+    }
+
+    private MenuItem createInsertImageItem(Integer rowIndex) {
         MenuItem insert = new MenuItem("Insert Image After");
         insert.setOnAction(ev -> {
             FileChooser fileChooser = new FileChooser();
@@ -267,33 +303,7 @@ public class CsvGrid extends GridPane {
                 resetGridRows();
             }
         });
-        cm.getItems().add(insert);
-        if (selStart != NO_SELECTION) {
-            if (rowIndex < selStart || rowIndex > selEnd) {
-                MenuItem move = new MenuItem("Insert Selected Rows After");
-                move.setOnAction(ev -> {
-                    FlexiBeans beans = new FlexiBeans();
-                    for (int i = selStart.intValue(); i <= selEnd.intValue(); i++) {
-                        beans.append(csv.getBeans().getBeans().get(i));
-                    }
-                    deleteBeans(selStart, selEnd);
-                    int index = getIndex(rowIndex);
-                    for (FlexiBean b: beans.getBeans()) {
-                        csv.getBeans().insert(index++, b);
-                    }
-                    resetGridRows();
-                });
-                cm.getItems().add(move);
-            }
-            MenuItem delete = new MenuItem("Delete Selected Rows");
-            delete.setOnAction(ev -> {
-                deleteBeans(selStart, selEnd);
-                resetGridRows();
-            });
-            cm.getItems().add(delete);
-        }
-
-        return cm;
+        return insert;
     }
 
     private MenuItem createDeselectItem() {
