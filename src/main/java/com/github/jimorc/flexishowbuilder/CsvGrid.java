@@ -140,22 +140,8 @@ public class CsvGrid extends GridPane {
         t.setFont(font);
         t.setFill(textColor);
         HBox box = new HBox(t);
-        box.setOnMouseEntered(e -> {
-            Logger.trace("In setOnMouseEntered, selectede = {}->{}", selStart, selEnd);
-            Node sourceNode = (Node) e.getSource();
-            Integer sourceIndex = GridPane.getRowIndex(sourceNode);
-            if (sourceIndex < selStart || sourceIndex > selEnd) {
-                setRowBackground(sourceIndex, "lightgreen");
-            }
-        });
-        box.setOnMouseExited(e -> {
-            Logger.trace("In setOnMouseExited, selected = {}->{}", selStart, selEnd);
-            Node sourceNode = (Node) e.getSource();
-            Integer sourceIndex = GridPane.getRowIndex(sourceNode);
-            if (sourceIndex < selStart || sourceIndex > selEnd) {
-                setRowBackground(sourceIndex, "transparent");
-            }
-        });
+        box.setOnMouseEntered(e -> onMouseEntered(e));
+        box.setOnMouseExited(e -> onMouseExited(e));
         box.setOnMousePressed(e -> {
             Logger.trace("In setOnMousePressed, selected = {}->{}", selStart, selEnd);
             Node sourceNode = (Node) e.getSource();
@@ -182,6 +168,24 @@ public class CsvGrid extends GridPane {
             Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
         });
         return box;
+    }
+
+    private void onMouseExited(MouseEvent e) {
+        Logger.trace("In setOnMouseExited, selected = {}->{}", selStart, selEnd);
+        Node sourceNode = (Node) e.getSource();
+        Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+        if (sourceIndex < selStart || sourceIndex > selEnd) {
+            setRowBackground(sourceIndex, "transparent");
+        }
+    }
+
+    private void onMouseEntered(MouseEvent e) {
+        Logger.trace("In setOnMouseEntered, selectede = {}->{}", selStart, selEnd);
+        Node sourceNode = (Node) e.getSource();
+        Integer sourceIndex = GridPane.getRowIndex(sourceNode);
+        if (sourceIndex < selStart || sourceIndex > selEnd) {
+            setRowBackground(sourceIndex, "lightgreen");
+        }
     }
 
     private void processPrimaryButtonDown(MouseEvent e, Integer sourceIndex) {
