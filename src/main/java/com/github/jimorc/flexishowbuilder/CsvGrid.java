@@ -236,19 +236,7 @@ public class CsvGrid extends GridPane {
             cm.getItems().add(selectRange);
         }
         if (rowIndex >= selStart && rowIndex <= selEnd) {
-            MenuItem deselect = new MenuItem("Deselect All Rows");
-            deselect.setOnAction(ev -> {
-                oldSelStart = selStart;
-                oldSelEnd = selEnd;
-                selStart = NO_SELECTION;
-                selEnd = NO_SELECTION;
-                Logger.debug("In deselect.setOnAction");
-                Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
-                Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
-                for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
-                    setRowBackground(row, "transparent");
-                }
-            });
+            MenuItem deselect = createDeselectItem();
             cm.getItems().addAll(deselect);
         }
         cm.getItems().add(new SeparatorMenuItem());
@@ -306,6 +294,23 @@ public class CsvGrid extends GridPane {
         }
 
         return cm;
+    }
+
+    private MenuItem createDeselectItem() {
+        MenuItem deselect = new MenuItem("Deselect All Rows");
+        deselect.setOnAction(ev -> {
+            oldSelStart = selStart;
+            oldSelEnd = selEnd;
+            selStart = NO_SELECTION;
+            selEnd = NO_SELECTION;
+            Logger.debug("In deselect.setOnAction");
+            Logger.debug("oldSelStart = {}, oldSelEnd = {}", oldSelStart, oldSelEnd);
+            Logger.debug("selStart = {}, selEnd = {}", selStart, selEnd);
+            for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                setRowBackground(row, "transparent");
+            }
+        });
+        return deselect;
     }
 
     private MenuItem createSelectRangeItem(Integer rowIndex) {
