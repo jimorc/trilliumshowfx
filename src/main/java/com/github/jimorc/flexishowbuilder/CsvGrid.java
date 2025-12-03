@@ -228,18 +228,7 @@ public class CsvGrid extends GridPane {
         Node sourceNode = (Node) e.getSource();
         Integer rowIndex = GridPane.getRowIndex(sourceNode);
 
-        MenuItem select = new MenuItem("Select Single Row");
-        select.setOnAction(ev -> {
-            Logger.debug("In select.setOnAction");
-            oldSelStart = selStart;
-            oldSelEnd = selEnd;
-            selStart = rowIndex;
-            selEnd = rowIndex;
-            for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
-                setRowBackground(row, "transparent");
-            }
-            setRowBackground(rowIndex, "lightblue");
-        });
+        MenuItem select = createSelectItem(rowIndex);
         cm.getItems().add(select);
 
         if (selStart != NO_SELECTION) {
@@ -332,6 +321,22 @@ public class CsvGrid extends GridPane {
         }
 
         return cm;
+    }
+
+    private MenuItem createSelectItem(Integer rowIndex) {
+        MenuItem select = new MenuItem("Select Single Row");
+        select.setOnAction(ev -> {
+            Logger.debug("In select.setOnAction");
+            oldSelStart = selStart;
+            oldSelEnd = selEnd;
+            selStart = rowIndex;
+            selEnd = rowIndex;
+            for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
+                setRowBackground(row, "transparent");
+            }
+            setRowBackground(rowIndex, "lightblue");
+        });
+        return select;
     }
 
     private void resetGridRows() {
