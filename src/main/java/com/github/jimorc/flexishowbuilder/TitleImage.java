@@ -9,6 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -23,6 +24,7 @@ public final class TitleImage {
     private static final int IMAGEWIDTH = 1400;
     private static final int IMAGEHEIGHT = 1050;
     private static final int FONTSIZE = 48;
+    private static final int BORDERSIZE = 10;  // actually half this on all sides.
 
     private TitleImage() {}
 
@@ -39,7 +41,10 @@ public final class TitleImage {
         cap.setFont(Font.font("System", FontWeight.BLACK, FONTSIZE));
         cap.setTextAlignment(TextAlignment.CENTER);
 
-        StackPane root = new StackPane(cap);
+        Rectangle back = new Rectangle(IMAGEWIDTH, IMAGEHEIGHT);
+        back.setFill(Color.YELLOW);
+        Rectangle inside = new Rectangle(IMAGEWIDTH - BORDERSIZE, IMAGEHEIGHT - BORDERSIZE);
+        StackPane root = new StackPane(back, inside, cap);
         Scene scene = new Scene(root, IMAGEWIDTH, IMAGEHEIGHT);
         scene.setFill(Color.BLACK);
 
