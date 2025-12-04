@@ -194,7 +194,6 @@ public class TitleAndSortStage extends FlexiStage {
         sb.append(" slide. Two or three lines of text is recommended.");
         Tooltip tTooltip = new Tooltip(sb.toString());
         textArea.setTooltip(tTooltip);
-        // TODO: centre text
         VBox.setMargin(textArea, insets);
         return textArea;
     }
