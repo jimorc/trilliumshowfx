@@ -114,10 +114,10 @@ public class BuilderGUI extends Application {
         OutputCSV out = new OutputCSV();
         try {
             String dir = csv.getFileDir();
-            String titleFileName = dir + "/title.jpg";
-            TitleImage.generateTitleImage(data.getTitle(), titleFileName);
+            String titleFileName = dir + "/start.jpg";
+            TitleImage.generateTitleImage(data.getStartTitle(), titleFileName);
             FlexiBean titleBean = new FlexiBean();
-            titleBean.setFilename("title.jpg");
+            titleBean.setFilename("start.jpg");
             out.appendBean(titleBean);
 
             csv.getBeans().sort(data.getOrder());
@@ -138,6 +138,10 @@ public class BuilderGUI extends Application {
                         "Appended bean for ", name, ": ", bean.toString()));
                 }
             }
+            titleFileName = dir + "/end.jpg";
+            TitleImage.generateTitleImage(data.getEndTitle(), titleFileName);
+            titleBean = new FlexiBean();
+            titleBean.setFilename("end.jpg");
             out.appendBean(titleBean);
         } catch (CSVException e) {
             Logger.error("CSVException thrown in generateOutputCSV: ", e);

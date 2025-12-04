@@ -21,7 +21,8 @@ import org.tinylog.Logger;
 public class TitleAndSortStage extends FlexiStage {
     private final int spacing = 10;
     private SortOrder sortOrder = SortOrder.AsIs;
-    private TextArea titleArea;
+    private TextArea startTitleArea;
+    private TextArea endTitleArea;
     private ToggleGroup sortGroup;
     private RadioButton noneButton;
     private RadioButton alphaFullButton;
@@ -44,7 +45,8 @@ public class TitleAndSortStage extends FlexiStage {
      * @return data set in stage object.
      */
     public TitleAndSortData getData() {
-        TitleAndSortData data = new TitleAndSortData(titleArea.getText(), sortOrder);
+        TitleAndSortData data = new TitleAndSortData(startTitleArea.getText(),
+            endTitleArea.getText(), sortOrder);
         return data;
     }
 
@@ -62,8 +64,10 @@ public class TitleAndSortStage extends FlexiStage {
         final Font labelFont = Font.font("Arial", FontWeight.BOLD, fontSize);
         Insets vBoxInsets = new Insets(topMargin, rightMargin, bottomMargin, leftMargin);
         Insets tLabelInsets = new Insets(tLabelMarginTop, rightMargin, bottomMargin, leftMargin);
-        Label titleLabel = createTitleLabel(labelFont, tLabelInsets);
-        titleArea = createTextArea(vBoxInsets);
+        Label startLabel = createStartEndLabel("Start Image Text", labelFont, tLabelInsets);
+        startTitleArea = createTextArea("Start", vBoxInsets);
+        Label endLabel = createStartEndLabel("End Image Text", labelFont, tLabelInsets);
+        endTitleArea = createTextArea("End", vBoxInsets);
 
         Label sortLabel = createSortLabel(labelFont, vBoxInsets);
         sortGroup = new ToggleGroup();
@@ -76,9 +80,9 @@ public class TitleAndSortStage extends FlexiStage {
         HBox buttonBox = createButtonBox(buttonTopMargin, buttonRightMargin, buttonBottomMargin, buttonLeftMargin);
 
         VBox vbox = new VBox(spacing);
-        vbox.getChildren().addAll(titleLabel, titleArea, sortLabel, noneButton,
-            alphaFullButton, alphaLastFirstButton, alphaFullRevButton, alphaLastFirstRevButton,
-            buttonBox);
+        vbox.getChildren().addAll(startLabel, startTitleArea, endLabel, endTitleArea, sortLabel,
+            noneButton, alphaFullButton, alphaLastFirstButton, alphaFullRevButton,
+            alphaLastFirstRevButton, buttonBox);
         return vbox;
     }
 
@@ -105,11 +109,11 @@ public class TitleAndSortStage extends FlexiStage {
         return gen;
     }
 
-    private Label createTitleLabel(final Font labelFont, final Insets insets) {
-        Label titleLabel = new Label("Show Title Text");
-        titleLabel.setFont(labelFont);
-        VBox.setMargin(titleLabel, insets);
-        return titleLabel;
+    private Label createStartEndLabel(String text, final Font labelFont, final Insets insets) {
+        Label startLabel = new Label(text);
+        startLabel.setFont(labelFont);
+        VBox.setMargin(startLabel, insets);
+        return startLabel;
     }
 
     private Label createSortLabel(final Font labelFont, final Insets insets) {
@@ -178,14 +182,17 @@ public class TitleAndSortStage extends FlexiStage {
         VBox.setMargin(alphaFullRevButton, insets);
     }
 
-    private TextArea createTextArea(Insets insets) {
+    private TextArea createTextArea(String startEnd, Insets insets) {
         final int prefColumnCount = 50;
         final int prefRowCount = 2;
         TextArea textArea = new TextArea();
         textArea.setPromptText("Enter title text here");
         textArea.setPrefColumnCount(prefColumnCount);
         textArea.setPrefRowCount(prefRowCount);
-        Tooltip tTooltip = new Tooltip("Enter the title text to appear on the title slide. Two lines is recommended.");
+        StringBuffer sb = new StringBuffer("Enter the title text to appear on the ");
+        sb.append(startEnd);
+        sb.append(" slide. Two or three lines of text is recommended.");
+        Tooltip tTooltip = new Tooltip(sb.toString());
         textArea.setTooltip(tTooltip);
         // TODO: centre text
         VBox.setMargin(textArea, insets);
@@ -205,6 +212,6 @@ public class TitleAndSortStage extends FlexiStage {
      * @return TitleAndSortData object for the settings in this stage.
      */
     public TitleAndSortData getSortData() {
-        return new TitleAndSortData(titleArea.getText(), sortOrder);
+        return new TitleAndSortData(startTitleArea.getText(), endTitleArea.getText(), sortOrder);
     }
 }
