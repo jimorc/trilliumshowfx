@@ -1,12 +1,18 @@
 package com.github.jimorc.flexishowbuilder;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Optional;
 import javafx.geometry.Insets;
 import javafx.geometry.Side;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
@@ -292,27 +298,58 @@ public class CsvGrid extends GridPane {
             fileChooser.setInitialDirectory(new File(dir));
             fileChooser.getExtensionFilters().add(new ExtensionFilter("Jpeg Files", "*.jpg", "*.jpeg"));
             File imageFile = fileChooser.showOpenDialog(null);
-            if (imageFile != null) {
-                String imageDir = imageFile.getParent();
-                Logger.debug("In insert.setOnAction, imageDir = \'{}\'\n, dir = \'{}\'",
-                    imageDir, dir);
-                if (!imageDir.equals(dir)) {
-                    Alert alert = new Alert(AlertType.ERROR);
-                    alert.setTitle("Invalid Image File");
-                    alert.setHeaderText("The image file must be located in the\n"
-                        + "same directory as all other files.");
-                    alert.setContentText("Click OK to try again.");
-                    alert.showAndWait();
-                    return;
-                }
-                FlexiBean iBean = new FlexiBean();
-                iBean.setFilename(imageFile.getName());
-                int index = rowIndex.intValue() + 1;
-                csv.getBeans().insert(index, iBean);
-                resetGridRows();
-            }
+            copyFile(rowIndex, imageFile);
         });
         return insert;
+    }
+
+    private void copyFile(Integer rowIndex, File imageFile) {
+        if (imageFile == null) {
+            Logger.debug("In copyFile, imageFile = null");
+            return;
+        }
+        String imageDir = imageFile.getParent();
+        Logger.debug("In copyFile, imageDir = \'{}\'\n, dir = \'{}\'",
+            imageDir, dir);
+        if (!imageDir.equals(dir)) {
+            Alert alert = new Alert(AlertType.CONFIRMATION);
+            alert.setTitle("Image File Location");
+            alert.setHeaderText("The selected image file is not located in the\n"
+                + "same directory as all other files.");
+            ButtonType copy = new ButtonType("Copy", ButtonData.YES);
+            ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            alert.getButtonTypes().setAll(cancel, copy);
+            alert.setContentText("Do you want to copy the file to that\n"
+                + "directory, or cancel the operation?");
+            Optional<ButtonType> result = alert.showAndWait();
+            if (!result.isPresent()) {
+                Logger.debug("In copyFile, user dos not want to copy file.");
+                return;
+            }
+            ButtonType bClicked = result.get();
+            if (bClicked.getButtonData() == ButtonData.YES) {
+                try {
+                    String f = dir + "/" + imageFile.getName();
+                    Files.copy(imageFile.toPath(), new File(f).toPath(),
+                        StandardCopyOption.REPLACE_EXISTING,
+                        StandardCopyOption.COPY_ATTRIBUTES);
+                } catch (IOException  ioe) {
+                    Alert al = new Alert(AlertType.ERROR);
+                    al.setTitle("Error Copying File");
+                    al.setHeaderText(ioe.getCause().getMessage());
+                    al.setContentText("Click OK to retry");
+                    al.showAndWait();
+                    return;
+                }
+            } else {
+                return;
+            }
+        }
+        FlexiBean iBean = new FlexiBean();
+        iBean.setFilename(imageFile.getName());
+        int index = rowIndex.intValue() + 1;
+        csv.getBeans().insert(index, iBean);
+        resetGridRows();
     }
 
     private MenuItem createDeselectItem() {
