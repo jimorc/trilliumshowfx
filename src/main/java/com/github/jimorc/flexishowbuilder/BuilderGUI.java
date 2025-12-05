@@ -130,7 +130,7 @@ public class BuilderGUI extends Application {
                 personTitle = person.getFullName();
                 TitleImage.generateTitleImage(personTitle, fileName);
                 FlexiBean personTitleBean = new FlexiBean();
-                personTitleBean.setFilename(personTitle + ".jpg");
+                personTitleBean.setFilename(fName + ".jpg");
                 out.appendBean(personTitleBean);
                 for (FlexiBean bean: csv.getPersonBeans(name).getBeans()) {
                     out.appendBean(bean);
