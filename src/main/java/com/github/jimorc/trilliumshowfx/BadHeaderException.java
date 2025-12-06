@@ -1,4 +1,4 @@
-package com.github.jimorc.flexishowbuilder;
+package com.github.jimorc.trilliumshowfx;
 
 /**
  * BadHeaderException is a specialization of the Exception class specifically to

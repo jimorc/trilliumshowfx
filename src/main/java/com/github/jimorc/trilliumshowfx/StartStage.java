@@ -1,4 +1,4 @@
-package com.github.jimorc.flexishowbuilder;
+package com.github.jimorc.trilliumshowfx;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.github.jimorc.flexishowbuilder;
+package com.github.jimorc.trilliumshowfx;
 
 /**
  * TitleAndSortData contains the data retrieved from TitleAndSortDialog.

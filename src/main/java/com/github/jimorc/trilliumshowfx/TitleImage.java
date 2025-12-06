@@ -1,4 +1,4 @@
-package com.github.jimorc.flexishowbuilder;
+package com.github.jimorc.trilliumshowfx;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;

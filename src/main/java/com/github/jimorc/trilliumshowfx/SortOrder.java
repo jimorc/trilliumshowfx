@@ -1,4 +1,4 @@
-package com.github.jimorc.flexishowbuilder;
+package com.github.jimorc.trilliumshowfx;
 
 /**
  * sortOrder defines possible sort orders for InputCSV lines.

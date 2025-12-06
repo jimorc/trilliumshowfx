@@ -1,4 +1,4 @@
-package com.github.jimorc.flexishowbuilder;
+package com.github.jimorc.trilliumshowfx;
 
 /**
  * The OutputCSV class is used to build the CSV lines to be passed to LibreOffice or Excel
