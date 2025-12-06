@@ -15,7 +15,7 @@ public class BuilderGUI extends Application {
     @Override
     public void start(Stage stage) {
         System.setProperty("LOG_LEVEL", "trace");
-        Logger.trace("flexishowbuilder starting.");
+        Logger.trace("trilliumshowfx starting.");
         StartStage startStage = new StartStage();
 
         startStage.showAndWait();

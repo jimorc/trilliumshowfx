@@ -8,7 +8,7 @@
             "type": "java",
             "name": "Launch App",
             "request": "launch",
-            "mainClass": "com.github.jimorc.flexishowbuilder.Launcher",
+            "mainClass": "com.github.jimorc.trilliumshowfx.Launcher",
             "linux": {
               "vmArgs": "--module-path /home/jim/java/javafx-sdk-25/lib --add-modules javafx.controls,javafx.fxml",
             },
