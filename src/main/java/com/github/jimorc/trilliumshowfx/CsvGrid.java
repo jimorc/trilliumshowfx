@@ -161,7 +161,7 @@ public class CsvGrid extends GridPane {
             setRowBackground(i, "transparent");
         }
         for (Integer i = selStart; i <= selEnd; i++) {
-            setRowBackground(i, "lightblue");
+            setRowBackground(i, "lightskyblue");
         }
         Logger.debug("On leaving setOnMouseReleased, selected = {}->{}", selStart, selEnd);
     }
@@ -195,7 +195,7 @@ public class CsvGrid extends GridPane {
         Node sourceNode = (Node) e.getSource();
         Integer sourceIndex = GridPane.getRowIndex(sourceNode);
         if (sourceIndex < selStart || sourceIndex > selEnd) {
-            setRowBackground(sourceIndex, "lightgreen");
+            setRowBackground(sourceIndex, "lightgray");
         }
     }
 
@@ -383,7 +383,7 @@ public class CsvGrid extends GridPane {
                 setRowBackground(row, "transparent");
             }
             for (Integer row = selStart; row <= selEnd; row++) {
-                setRowBackground(row, "lightblue");
+                setRowBackground(row, "lightskyblue");
             }
         });
         return selectRange;
@@ -400,7 +400,7 @@ public class CsvGrid extends GridPane {
             for (Integer row = oldSelStart; row <= oldSelEnd; row++) {
                 setRowBackground(row, "transparent");
             }
-            setRowBackground(rowIndex, "lightblue");
+            setRowBackground(rowIndex, "lightskyblue");
         });
         return select;
     }
