@@ -1,6 +1,7 @@
 # trilliumshowfx
 `trilliumshowfx` is a program that takes a CSV file containing image file and owner names
-downloaded from my photography club website, and builds title images and an Excel spreadsheet
+downloaded from EntryWizard plugin on my photography club's website, and builds title images
+and an Excel spreadsheet
 (XLS) file for input into flexishow to display the slideshow. These slideshows are used to
 display images for competitions, non-competition events which we call Theme Nights, and in
 special interest groups.
