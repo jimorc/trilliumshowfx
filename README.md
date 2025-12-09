@@ -14,3 +14,8 @@ The license is provided in a file called
 [LICENSE](LICENSE). At the moment, this is the MIT License, but it may be necessary to
 modify this to a more restrictive license depending on the licensing of the various libraries
 that this project uses.
+
+JavaFX and Java are provided under 
+[GPL v2 with a Classpath Exception](https://openjdk.org/legal/gplv2+ce.html).
+I am not a lawyer, but as far as I can tell, that means that `trilliumshowfx` can use the MIT
+license since I do not make any changes to Java or JavaFX.
