@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -78,7 +80,9 @@ public class InputCSVTests {
         assertThrows(CSVException.class, () -> new InputCSV(f));
     }
 
+    // Test disabled on Windows because it is not possible to set a file to not be readable.
     @Test
+    @DisabledOnOs(OS.WINDOWS)
     void testConstructorIOError() {
         Path path = Path.of("testing/data/temp.csv");
         File f = new File("testing/data/temp.csv");
