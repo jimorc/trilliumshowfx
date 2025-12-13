@@ -28,3 +28,7 @@ replay_pid*
 
 # Mac OS only files
 .DS_Store
+
+# Windows only files
+# test.jpg not deleted in TitleImageTests because it is being used by VSCode when running test
+test.jpg
