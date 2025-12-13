@@ -36,7 +36,11 @@ public class TitleImageTests {
     @Test
     void testGenerateTitleImage(FxRobot robot) {
         Path path1;
-        if (System.getProperty("os.name").contains("Mac OS X")) {
+        String os = System.getProperty("os.name");
+
+        if (os.contains("Windows")) {
+            path1 = Path.of("testing\\data\\test_windows_image.jpg");
+        } else if (os.contains("Mac OS")) {
             path1 = Path.of("testing/data/test_arial_image.jpg");
         } else {
             path1 = Path.of("testing/data/test_image.jpg");
@@ -63,7 +67,8 @@ public class TitleImageTests {
             fail("IO Error: " + e.getMessage());
         } finally {
             // cleanup
-            Path.of("test.jpg").toFile().delete();
+            // file is not deleted when running tests in VSCode on Windows.
+            path2.toFile().delete();
         }
     }
 }
