@@ -261,11 +261,14 @@
   <plugin>
     <groupId>org.panteleyev</groupId>
     <artifactId>jpackage-maven-plugin</artifactId>
-    <version>1.7.0</version>
+    <version>1.7.1</version>
     <configuration>
-      <name>trilliumshowfx</name>
+      <name>${project.artifactId}</name>
+      <appVersion>${project.version}</appVersion>
+      <copyright>Copyright © 2025</copyright>
       <input>target</input>
       <mainJar>${project.artifactId}-${project.version}-jar-with-dependencies.jar</mainJar>
+      <mainClass>com.github.jimorc.trilliumshowfx.Launcher</mainClass>
       <destination>target/dist</destination>
     </configuration>
     <executions>
@@ -288,6 +291,21 @@
         <configuration>
           <type>DMG</type>
         </configuration>
+      </execution>
+      <execution>
+        <id>win</id>
+          <goals>
+            <goal>jpackage</goal>
+          </goals>
+          <configuration>
+            <type>MSI</type>
+            <input>${project.build.directory}</input>
+            <icon>${project.basedir}/src/main/resources/icons/photo-gallery.ico</icon>
+            <winMenu>true</winMenu>
+            <winMenuGroup>trilliumshowfx</winMenuGroup>
+            <winShortcut>true</winShortcut>
+            <winShortcutPrompt>true</winShortcutPrompt>
+          </configuration>
       </execution>
     </executions>
    </plugin>
