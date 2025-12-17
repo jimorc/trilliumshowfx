@@ -78,6 +78,12 @@
     <artifactId>poi</artifactId>
     <version>5.4.1</version>
 </dependency>
+<!-- https://mvnrepository.com/artifact/uk.co.bithatch/flatpak-maven-plugin -->
+<dependency>
+    <groupId>uk.co.bithatch</groupId>
+    <artifactId>flatpak-maven-plugin</artifactId>
+    <version>0.0.3</version>
+</dependency>
 </dependencies>
     <build>
       <plugins>
@@ -183,6 +189,7 @@
           <artifactId>maven-surefire-plugin</artifactId>
           <version>${maven-surefire-plugin.version}</version>
             <configuration>
+              <excludeJUnit5Engines>junit-vintage</excludeJUnit5Engines>
               <environmentVariables>
                   <PATH>${basedir}\\..;${java.library.path}</PATH>
               </environmentVariables>
