@@ -78,12 +78,6 @@
     <artifactId>poi</artifactId>
     <version>5.4.1</version>
 </dependency>
-<!-- https://mvnrepository.com/artifact/uk.co.bithatch/flatpak-maven-plugin -->
-<dependency>
-    <groupId>uk.co.bithatch</groupId>
-    <artifactId>flatpak-maven-plugin</artifactId>
-    <version>0.0.3</version>
-</dependency>
 </dependencies>
     <build>
       <plugins>
@@ -286,6 +280,7 @@
         </goals>
         <configuration>
           <type>DEB</type>
+          <icon>${project.basedir}/src/main/resources/icons/photo-gallery.png</icon>
           <linuxShortcut>true</linuxShortcut>
           <linuxMenuGroup>Other</linuxMenuGroup>
         </configuration>
