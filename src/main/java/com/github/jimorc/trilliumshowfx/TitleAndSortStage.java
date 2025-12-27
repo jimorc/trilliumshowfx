@@ -89,20 +89,12 @@ public class TitleAndSortStage extends FlexiStage {
     }
 
     private VBox createSizeBox(final Font labelFont, final Insets insets) {
-        final int textPrefColumns = 5;
-        final double textFieldMaxWidth = 55;
         Label sizeLabel = new Label("Slide Size");
         sizeLabel.setFont(labelFont);
         VBox.setMargin(sizeLabel, insets);
 
-        TextField widthField = new TextField("1400");
-        widthField.setPrefColumnCount(textPrefColumns);
-        widthField.setMaxWidth(textFieldMaxWidth);
-        widthField.setAlignment(Pos.CENTER_RIGHT);
-        TextField heightField = new TextField("1050");
-        heightField.setPrefColumnCount(textPrefColumns);
-        heightField.setMaxWidth(textFieldMaxWidth);
-        heightField.setAlignment(Pos.CENTER_RIGHT);
+        TextField widthField = createSizeTextField("1400");
+        TextField heightField = createSizeTextField("1050");
         Label x = new Label(" x ");
         Label pixels = new Label(" pixels");
         HBox sizeHBox = new HBox();
@@ -114,6 +106,16 @@ public class TitleAndSortStage extends FlexiStage {
 
         );
         return sizeBox;
+    }
+
+    private TextField createSizeTextField(String defaultText) {
+        final int textPrefColumns = 5;
+        final double textFieldMaxWidth = 55;
+        TextField textField = new TextField(defaultText);
+        textField.setPrefColumnCount(textPrefColumns);
+        textField.setMaxWidth(textFieldMaxWidth);
+        textField.setAlignment(Pos.CENTER_RIGHT);
+        return textField;
     }
 
     private HBox createButtonBox(final int buttonTopMargin, final int buttonRightMargin, final int buttonBottomMargin,
