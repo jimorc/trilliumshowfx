@@ -64,7 +64,7 @@ public class TitleAndSortStage extends FlexiStage {
         final Font labelFont = Font.font("Arial", FontWeight.BOLD, fontSize);
         Insets vBoxInsets = new Insets(topMargin, rightMargin, bottomMargin, leftMargin);
         Insets tLabelInsets = new Insets(tLabelMarginTop, rightMargin, bottomMargin, leftMargin);
-        Label sizeLabel = createSizeLabel("Slide Size", labelFont, vBoxInsets);
+        VBox sizeBox = createSizeBox(labelFont, vBoxInsets);
         Label startLabel = createStartEndLabel("Start Image Text", labelFont, tLabelInsets);
         startTitleArea = createTextArea("Start", vBoxInsets);
         Label endLabel = createStartEndLabel("End Image Text", labelFont, tLabelInsets);
@@ -81,17 +81,19 @@ public class TitleAndSortStage extends FlexiStage {
         HBox buttonBox = createButtonBox(buttonTopMargin, buttonRightMargin, buttonBottomMargin, buttonLeftMargin);
 
         VBox vbox = new VBox(spacing);
-        vbox.getChildren().addAll(sizeLabel, startLabel, startTitleArea, endLabel, endTitleArea, sortLabel,
+        vbox.getChildren().addAll(sizeBox, startLabel, startTitleArea, endLabel, endTitleArea, sortLabel,
             noneButton, alphaFullButton, alphaLastFirstButton, alphaFullRevButton,
             alphaLastFirstRevButton, buttonBox);
         return vbox;
     }
 
-    private Label createSizeLabel(String text, final Font labelFont, final Insets insets) {
-        Label sizeLabel = new Label(text);
+    private VBox createSizeBox(final Font labelFont, final Insets insets) {
+        Label sizeLabel = new Label("Slide Size");
         sizeLabel.setFont(labelFont);
         VBox.setMargin(sizeLabel, insets);
-        return sizeLabel;
+        VBox sizeBox = new VBox();
+        sizeBox.getChildren().add(sizeLabel);
+        return sizeBox;
     }
 
     private HBox createButtonBox(final int buttonTopMargin, final int buttonRightMargin, final int buttonBottomMargin,
