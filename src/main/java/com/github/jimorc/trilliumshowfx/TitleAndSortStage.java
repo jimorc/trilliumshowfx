@@ -7,10 +7,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -31,6 +29,8 @@ public class TitleAndSortStage extends FlexiStage {
     private RadioButton alphaLastFirstButton;
     private RadioButton alphaFullRevButton;
     private RadioButton alphaLastFirstRevButton;
+    private final int defaultSizeWidth = 1400;
+    private final int defaultSizeHeight = 1050;
 
     /**
      * Constructor.
@@ -94,8 +94,8 @@ public class TitleAndSortStage extends FlexiStage {
         sizeLabel.setFont(labelFont);
         VBox.setMargin(sizeLabel, insets);
 
-        TextField widthField = createSizeTextField("1400");
-        TextField heightField = createSizeTextField("1050");
+        SizeTextField widthField = new SizeTextField(defaultSizeWidth);
+        SizeTextField heightField = new SizeTextField(defaultSizeHeight);
         Label x = new Label(" x ");
         Label pixels = new Label(" pixels");
         HBox sizeHBox = new HBox();
@@ -107,33 +107,6 @@ public class TitleAndSortStage extends FlexiStage {
 
         );
         return sizeBox;
-    }
-
-    private TextField createSizeTextField(String defaultText) {
-        final int maxDigits = 5;
-        final double textFieldMaxWidth = 55;
-        TextField textField = new TextField(defaultText);
-        textField.setPrefColumnCount(maxDigits);
-        textField.setMaxWidth(textFieldMaxWidth);
-        textField.setAlignment(Pos.CENTER_RIGHT);
-        Tooltip sizeTooltip = new Tooltip("Enter the width or height in pixels for the slides.");
-        textField.setTooltip(sizeTooltip);
-        textField.addEventFilter(KeyEvent.KEY_TYPED, e -> {
-            String character = e.getCharacter();
-            String numbers = "0123456789";
-            if (numbers.contains(character)) {
-                handleDigits(maxDigits, textField, e);
-            } else if (!("\b".equals(character)) && !("\u007F".equals(character))) {
-                e.consume(); // Ignore all but Backspace and Delete
-            }
-        });
-        return textField;
-    }
-
-    private void handleDigits(final int maxDigits, TextField textField, KeyEvent e) {
-        if (textField.getText().length() >= maxDigits) {
-            e.consume(); // Limit to maxDigits
-        }
     }
 
     private HBox createButtonBox(final int buttonTopMargin, final int buttonRightMargin, final int buttonBottomMargin,
