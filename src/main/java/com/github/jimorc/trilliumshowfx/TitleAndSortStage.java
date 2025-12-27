@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -88,11 +89,30 @@ public class TitleAndSortStage extends FlexiStage {
     }
 
     private VBox createSizeBox(final Font labelFont, final Insets insets) {
+        final int textPrefColumns = 5;
+        final double textFieldMaxWidth = 55;
         Label sizeLabel = new Label("Slide Size");
         sizeLabel.setFont(labelFont);
         VBox.setMargin(sizeLabel, insets);
+
+        TextField widthField = new TextField("1400");
+        widthField.setPrefColumnCount(textPrefColumns);
+        widthField.setMaxWidth(textFieldMaxWidth);
+        widthField.setAlignment(Pos.CENTER_RIGHT);
+        TextField heightField = new TextField("1050");
+        heightField.setPrefColumnCount(textPrefColumns);
+        heightField.setMaxWidth(textFieldMaxWidth);
+        heightField.setAlignment(Pos.CENTER_RIGHT);
+        Label x = new Label(" x ");
+        Label pixels = new Label(" pixels");
+        HBox sizeHBox = new HBox();
+        sizeHBox.getChildren().addAll(widthField, x, heightField, pixels);
+        sizeHBox.setAlignment(Pos.CENTER_LEFT);
+        VBox.setMargin(sizeHBox, insets);
         VBox sizeBox = new VBox();
-        sizeBox.getChildren().add(sizeLabel);
+        sizeBox.getChildren().addAll(sizeLabel, sizeHBox
+
+        );
         return sizeBox;
     }
 
