@@ -122,14 +122,18 @@ public class TitleAndSortStage extends FlexiStage {
             String character = e.getCharacter();
             String numbers = "0123456789";
             if (numbers.contains(character)) {
-                if (textField.getText().length() >= maxDigits) {
-                    e.consume(); // Limit to maxDigits
-                }
+                handleDigits(maxDigits, textField, e);
             } else if (!("\b".equals(character)) && !("\u007F".equals(character))) {
                 e.consume(); // Ignore all but Backspace and Delete
             }
         });
         return textField;
+    }
+
+    private void handleDigits(final int maxDigits, TextField textField, KeyEvent e) {
+        if (textField.getText().length() >= maxDigits) {
+            e.consume(); // Limit to maxDigits
+        }
     }
 
     private HBox createButtonBox(final int buttonTopMargin, final int buttonRightMargin, final int buttonBottomMargin,
