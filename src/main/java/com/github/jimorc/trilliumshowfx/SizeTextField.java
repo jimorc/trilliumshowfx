@@ -26,11 +26,11 @@ public class SizeTextField extends TextField {
         this.setTooltip(sizeTooltip);
         this.addEventFilter(KeyEvent.KEY_TYPED,
             e -> {
-                handleSizeFieldKeyInput(e);
+                filterSizeFieldKeyInput(e);
             });
     }
 
-    private void handleSizeFieldKeyInput(KeyEvent e) {
+    private void filterSizeFieldKeyInput(KeyEvent e) {
         String character = e.getCharacter();
         String numbers = "0123456789";
         if (numbers.contains(character)) {
