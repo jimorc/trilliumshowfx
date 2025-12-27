@@ -10,6 +10,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
@@ -109,12 +110,25 @@ public class TitleAndSortStage extends FlexiStage {
     }
 
     private TextField createSizeTextField(String defaultText) {
-        final int textPrefColumns = 5;
+        final int maxDigits = 5;
         final double textFieldMaxWidth = 55;
         TextField textField = new TextField(defaultText);
-        textField.setPrefColumnCount(textPrefColumns);
+        textField.setPrefColumnCount(maxDigits);
         textField.setMaxWidth(textFieldMaxWidth);
         textField.setAlignment(Pos.CENTER_RIGHT);
+        Tooltip sizeTooltip = new Tooltip("Enter the width or height in pixels for the slides.");
+        textField.setTooltip(sizeTooltip);
+        textField.addEventFilter(KeyEvent.KEY_TYPED, e -> {
+            String character = e.getCharacter();
+            String numbers = "0123456789";
+            if (numbers.contains(character)) {
+                if (textField.getText().length() >= maxDigits) {
+                    e.consume(); // Limit to maxDigits
+                }
+            } else if (!("\b".equals(character)) && !("\u007F".equals(character))) {
+                e.consume(); // Ignore all but Backspace and Delete
+            }
+        });
         return textField;
     }
 
