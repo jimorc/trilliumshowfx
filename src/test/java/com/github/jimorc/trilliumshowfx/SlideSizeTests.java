@@ -36,4 +36,14 @@ public class SlideSizeTests {
         assertEquals(minWidth, slideSize.getWidth()); // Minimum enforced
         assertEquals(maxHeight, slideSize.getHeight()); // Maximum enforced
     }
+
+    @Test
+    public void testSlideSizeToJson() {
+        final int w1600 = 1600;
+        final int h1200 = 1200;
+        SlideSize slideSize = new SlideSize(w1600, h1200);
+        var json = slideSize.toJson();
+        assertEquals(w1600, json.getInt("width"));
+        assertEquals(h1200, json.getInt("height"));
+    }
 }

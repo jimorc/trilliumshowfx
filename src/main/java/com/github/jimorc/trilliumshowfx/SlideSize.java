@@ -1,5 +1,7 @@
 package com.github.jimorc.trilliumshowfx;
 
+import org.json.JSONObject;
+
 /**
  * Class to represent the size of a slide.
  */
@@ -75,5 +77,16 @@ public class SlideSize {
         } else if (height > MAX_SIZE) {
             this.height = MAX_SIZE;
         }
+    }
+
+    /**
+     * Convert the SlideSize to a JSON object.
+     * @return A JSONObject representing the SlideSize.
+     */
+    public JSONObject toJson() {
+        JSONObject obj = new JSONObject();
+        obj.put("width", this.width);
+        obj.put("height", this.height);
+        return obj;
     }
 }

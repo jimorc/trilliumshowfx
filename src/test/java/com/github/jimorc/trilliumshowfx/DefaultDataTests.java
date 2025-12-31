@@ -1,9 +1,14 @@
 package com.github.jimorc.trilliumshowfx;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+//import org.assertj.core.internal.bytebuddy.agent.builder.AgentBuilder.CircularityLock.Default;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Unit tests for DefaultData class.
@@ -40,7 +45,42 @@ public class DefaultDataTests {
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
-        jsonFile = new File("nonexistent.json");
+//        jsonFile = new File("nonexistent.json");
+        if (jsonFile.exists()) {
+            jsonFile.delete();
+        }
+    }
+
+    @Test
+    public void testConstructorInvalidJson() {
+        final int width = 1400;
+        final int height = 1050;
+        String invalidJson = "{ invalid json ";;
+        DefaultData data = new DefaultData(invalidJson);
+        SlideSize slideSize = data.getSlideSize();
+        assertEquals(width, slideSize.getWidth());
+        assertEquals(height, slideSize.getHeight());
+    }
+
+    @Test
+    public void testSaveDefaults() {
+        File jsonFile = new File("temp_defaults.json");
+        DefaultData data = new DefaultData(jsonFile);
+        // force change to trigger save
+        data.getSlideSize();
+        try (BufferedReader jsonFileReader = new BufferedReader(
+                new FileReader(jsonFile.getAbsolutePath()))) {
+            String line;
+            StringBuilder sb = new StringBuilder();
+            while ((line = jsonFileReader.readLine()) != null) {
+                sb.append(line);
+            }
+            String fileContent = sb.toString();
+            String expectedContent = "{\"slide_size\":{\"width\":1400,\"height\":1050}}";
+            assertEquals(expectedContent, fileContent);
+        } catch (IOException e) {
+            fail(e.getCause().toString());
+        }
         if (jsonFile.exists()) {
             jsonFile.delete();
         }
