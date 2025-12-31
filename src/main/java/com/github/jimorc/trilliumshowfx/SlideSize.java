@@ -14,8 +14,8 @@ public class SlideSize {
      * Default height for slides.
      */
     public static final int DEFAULT_HEIGHT = 1050;
-    private static final int MIN_SIZE = 100;
-    private static final int MAX_SIZE = 99999;
+    public static final int MIN_SIZE = 100;
+    public static final int MAX_SIZE = 99999;
     private int width;
     private int height;
 
