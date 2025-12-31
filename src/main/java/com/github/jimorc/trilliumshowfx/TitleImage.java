@@ -21,8 +21,6 @@ import org.tinylog.Logger;
  * TitleImage generates title slide images.
  */
 public final class TitleImage {
-    private static final int IMAGEWIDTH = 1400;
-    private static final int IMAGEHEIGHT = 1050;
     private static final int FONTSIZE = 48;
     private static final int BORDERSIZE = 10;  // actually half this on all sides.
 
@@ -34,18 +32,19 @@ public final class TitleImage {
      * @param imageFileName is the name to use when writing out the image file.
      * @throws IOException when there is an error writing the file.
      */
-    public static void generateTitleImage(String caption, String imageFileName) throws IOException {
+    public static void generateTitleImage(SlideSize slideSize, String caption, String imageFileName) throws IOException {
         Logger.debug("About to create new image with caption: ", caption);
         Text cap = new Text(caption);
         cap.setFill(Color.YELLOW);
         cap.setFont(Font.font("System", FontWeight.BLACK, FONTSIZE));
         cap.setTextAlignment(TextAlignment.CENTER);
 
-        Rectangle back = new Rectangle(IMAGEWIDTH, IMAGEHEIGHT);
+        Rectangle back = new Rectangle(slideSize.getWidth(), slideSize.getHeight());
         back.setFill(Color.YELLOW);
-        Rectangle inside = new Rectangle(IMAGEWIDTH - BORDERSIZE, IMAGEHEIGHT - BORDERSIZE);
+        Rectangle inside = new Rectangle(slideSize.getWidth() - BORDERSIZE,
+            slideSize.getHeight() - BORDERSIZE);
         StackPane root = new StackPane(back, inside, cap);
-        Scene scene = new Scene(root, IMAGEWIDTH, IMAGEHEIGHT);
+        Scene scene = new Scene(root, slideSize.getWidth(), slideSize.getHeight());
         scene.setFill(Color.BLACK);
 
         WritableImage writableImage = scene.snapshot(null);

@@ -112,10 +112,11 @@ public class BuilderGUI extends Application {
     private OutputCSV generateOutputCSV(InputCSV csv, TitleAndSortData data) {
         Logger.trace("In BuilderGUI.generateOutputCSV");
         OutputCSV out = new OutputCSV();
+        
         try {
             String dir = csv.getFileDir();
             String titleFileName = dir + "/start.jpg";
-            TitleImage.generateTitleImage(data.getStartTitle(), titleFileName);
+            TitleImage.generateTitleImage(data.getSlideSize(), data.getStartTitle(), titleFileName);
             FlexiBean titleBean = new FlexiBean();
             titleBean.setFilename("start.jpg");
             out.appendBean(titleBean);
@@ -128,7 +129,7 @@ public class BuilderGUI extends Application {
                 String fileName = dir + "/" + fName + ".jpg";
                 String personTitle = "";
                 personTitle = person.getFullName();
-                TitleImage.generateTitleImage(personTitle, fileName);
+                TitleImage.generateTitleImage(data.getSlideSize(), personTitle, fileName);
                 FlexiBean personTitleBean = new FlexiBean();
                 personTitleBean.setFilename(fName + ".jpg");
                 out.appendBean(personTitleBean);
@@ -139,7 +140,7 @@ public class BuilderGUI extends Application {
                 }
             }
             titleFileName = dir + "/end.jpg";
-            TitleImage.generateTitleImage(data.getEndTitle(), titleFileName);
+            TitleImage.generateTitleImage(data.getSlideSize(), data.getEndTitle(), titleFileName);
             titleBean = new FlexiBean();
             titleBean.setFilename("end.jpg");
             out.appendBean(titleBean);

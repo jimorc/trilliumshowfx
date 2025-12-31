@@ -1,5 +1,6 @@
 package com.github.jimorc.trilliumshowfx;
 
+import java.io.File;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,6 +14,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+
+import javax.swing.filechooser.FileSystemView;
+
 import org.tinylog.Logger;
 
 /**
@@ -21,6 +25,8 @@ import org.tinylog.Logger;
 public class TitleAndSortStage extends FlexiStage {
     private final int spacing = 10;
     private SortOrder sortOrder = SortOrder.AsIs;
+    private SizeTextField widthField;
+    private SizeTextField heightField;
     private TextArea startTitleArea;
     private TextArea endTitleArea;
     private ToggleGroup sortGroup;
@@ -29,13 +35,20 @@ public class TitleAndSortStage extends FlexiStage {
     private RadioButton alphaLastFirstButton;
     private RadioButton alphaFullRevButton;
     private RadioButton alphaLastFirstRevButton;
-    private final int defaultSizeWidth = 1400;
-    private final int defaultSizeHeight = 1050;
+    private DefaultData defaultData = null;
 
     /**
      * Constructor.
      */
     public TitleAndSortStage() {
+        String defFileName = FileSystemView.getFileSystemView().getHomeDirectory()
+            + System.getProperty("file.separator")
+            + ".config" + System.getProperty("file.separator")
+            + "trilliumshowfx" + System.getProperty("file.separator")
+            + "defaults.json";
+        File defFile = new File(defFileName);
+        defaultData = new DefaultData(defFile);
+
         Logger.debug("In TitleAndSortStage constructor");
         VBox vbox = createBox();
         Scene scene = new Scene(vbox);
@@ -47,7 +60,11 @@ public class TitleAndSortStage extends FlexiStage {
      * @return data set in stage object.
      */
     public TitleAndSortData getData() {
-        TitleAndSortData data = new TitleAndSortData(startTitleArea.getText(),
+        int slideWidth = Integer.parseInt(widthField.getText());
+        int slideHeight = Integer.parseInt(heightField.getText());
+        SlideSize slideSize = new SlideSize(slideWidth, slideHeight);
+        TitleAndSortData data = new TitleAndSortData(slideSize, 
+            startTitleArea.getText(),
             endTitleArea.getText(), sortOrder);
         return data;
     }
@@ -94,8 +111,9 @@ public class TitleAndSortStage extends FlexiStage {
         sizeLabel.setFont(labelFont);
         VBox.setMargin(sizeLabel, insets);
 
-        SizeTextField widthField = new SizeTextField(defaultSizeWidth);
-        SizeTextField heightField = new SizeTextField(defaultSizeHeight);
+        SlideSize slideSize = defaultData.getSlideSize();
+        widthField = new SizeTextField(slideSize.getWidth());
+        heightField = new SizeTextField(slideSize.getHeight());
         Label x = new Label(" x ");
         Label pixels = new Label(" pixels");
         HBox sizeHBox = new HBox();
@@ -226,14 +244,5 @@ public class TitleAndSortStage extends FlexiStage {
         button.setToggleGroup(group);
         button.setUserData(order);
         return button;
-    }
-
-    /**
-     * Retrieve the TitleAndSortData object representing the settings in the TitleAndSortStage
-     * object.
-     * @return TitleAndSortData object for the settings in this stage.
-     */
-    public TitleAndSortData getSortData() {
-        return new TitleAndSortData(startTitleArea.getText(), endTitleArea.getText(), sortOrder);
     }
 }
