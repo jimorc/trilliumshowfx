@@ -21,7 +21,7 @@ public class SlideSize {
     /**
      * Max acceptable width or height.
      */
-    public static final int MAX_SIZE = 99999;
+    public static final int MAX_SIZE = 9999;
     private int width;
     private int height;
 

@@ -14,8 +14,11 @@ import javafx.scene.layout.BorderWidths;
  * A TextField that only accepts numeric input for size values.
  */
 public class SizeTextField extends TextField {
-    private final int maxDigits = 5;
-    private final double textFieldMaxWidth = 60;
+    private final int maxDigits = String.valueOf(SlideSize.MAX_SIZE).length();
+    // Following value is just an approximation that works well for maxDigits of 3 and 4.
+    // If maxDigits is 5 or greater (not likely), then a more general value should be
+    // created based on size of borders and max width of each digit.
+    private final double textFieldMaxWidth = 15 * maxDigits;
     private final double borderWidth = 3.0;
 
     /**
