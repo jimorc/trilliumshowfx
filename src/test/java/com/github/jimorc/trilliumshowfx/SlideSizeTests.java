@@ -23,8 +23,6 @@ public class SlideSizeTests {
         final int h1500 = 1500;
         final int belowMin = 50;
         final int aboveMax = 100000;
-        final int minWidth = 100;
-        final int maxHeight = 99999;
         SlideSize slideSize = new SlideSize();
         slideSize.setWidth(w2000);
         slideSize.setHeight(h1500);
@@ -33,8 +31,8 @@ public class SlideSizeTests {
 
         slideSize.setWidth(belowMin); // Below minimum
         slideSize.setHeight(aboveMax); // Above maximum
-        assertEquals(minWidth, slideSize.getWidth()); // Minimum enforced
-        assertEquals(maxHeight, slideSize.getHeight()); // Maximum enforced
+        assertEquals(SlideSize.MIN_SIZE, slideSize.getWidth()); // Minimum enforced
+        assertEquals(SlideSize.MAX_SIZE, slideSize.getHeight()); // Maximum enforced
     }
 
     @Test
