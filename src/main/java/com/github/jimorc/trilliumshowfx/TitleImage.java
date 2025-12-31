@@ -32,7 +32,8 @@ public final class TitleImage {
      * @param imageFileName is the name to use when writing out the image file.
      * @throws IOException when there is an error writing the file.
      */
-    public static void generateTitleImage(SlideSize slideSize, String caption, String imageFileName) throws IOException {
+    public static void generateTitleImage(SlideSize slideSize, String caption,
+            String imageFileName) throws IOException {
         Logger.debug("About to create new image with caption: ", caption);
         Text cap = new Text(caption);
         cap.setFill(Color.YELLOW);

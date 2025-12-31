@@ -14,9 +14,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-
 import javax.swing.filechooser.FileSystemView;
-
 import org.tinylog.Logger;
 
 /**
@@ -35,7 +33,7 @@ public class TitleAndSortStage extends FlexiStage {
     private RadioButton alphaLastFirstButton;
     private RadioButton alphaFullRevButton;
     private RadioButton alphaLastFirstRevButton;
-    private DefaultData defaultData = null;
+    private DefaultData defaultData;
 
     /**
      * Constructor.
@@ -63,7 +61,7 @@ public class TitleAndSortStage extends FlexiStage {
         int slideWidth = Integer.parseInt(widthField.getText());
         int slideHeight = Integer.parseInt(heightField.getText());
         SlideSize slideSize = new SlideSize(slideWidth, slideHeight);
-        TitleAndSortData data = new TitleAndSortData(slideSize, 
+        TitleAndSortData data = new TitleAndSortData(slideSize,
             startTitleArea.getText(),
             endTitleArea.getText(), sortOrder);
         return data;

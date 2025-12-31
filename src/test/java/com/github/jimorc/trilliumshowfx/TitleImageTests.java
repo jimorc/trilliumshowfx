@@ -25,9 +25,9 @@ public class TitleImageTests {
     @Start
     private void start(Stage stage) {
         try {
-            SlideSize slideSize = new SlideSize(SlideSize.DEFAULT_WIDTH, 
+            SlideSize slideSize = new SlideSize(SlideSize.DEFAULT_WIDTH,
                 SlideSize.DEFAULT_HEIGHT);
-            TitleImage.generateTitleImage(slideSize,"Test Caption Line1\nLine2", 
+            TitleImage.generateTitleImage(slideSize, "Test Caption Line1\nLine2",
                 "test.jpg");
         } catch (IOException e) {
             fail("Exception thrown: " + e.getMessage());

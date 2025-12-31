@@ -4,7 +4,13 @@ package com.github.jimorc.trilliumshowfx;
  * Class to represent the size of a slide.
  */
 public class SlideSize {
+    /**
+     * Default width for slides.
+     */
     public static final int DEFAULT_WIDTH = 1400;
+    /**
+     * Default height for slides.
+     */
     public static final int DEFAULT_HEIGHT = 1050;
     private static final int MIN_SIZE = 100;
     private static final int MAX_SIZE = 99999;

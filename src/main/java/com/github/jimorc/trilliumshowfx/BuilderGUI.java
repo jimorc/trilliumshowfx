@@ -112,7 +112,6 @@ public class BuilderGUI extends Application {
     private OutputCSV generateOutputCSV(InputCSV csv, TitleAndSortData data) {
         Logger.trace("In BuilderGUI.generateOutputCSV");
         OutputCSV out = new OutputCSV();
-        
         try {
             String dir = csv.getFileDir();
             String titleFileName = dir + "/start.jpg";
