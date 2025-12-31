@@ -6,13 +6,17 @@ import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Border;
+import javafx.scene.layout.BorderStroke;
+import javafx.scene.layout.BorderWidths;
 
 /**
  * A TextField that only accepts numeric input for size values.
  */
 public class SizeTextField extends TextField {
     private final int maxDigits = 5;
-    private final double textFieldMaxWidth = 55;
+    private final double textFieldMaxWidth = 60;
+    private final double borderWidth = 3.0;
 
     /**
      * Constructs a SizeTextField with the specified value as text.
@@ -24,6 +28,10 @@ public class SizeTextField extends TextField {
         this.setPrefWidth(textFieldMaxWidth);
         this.positionCaret(this.getText().length());
         this.setAlignment(Pos.CENTER_RIGHT);
+        BorderWidths widths = new BorderWidths(borderWidth);
+        BorderStroke stroke = new BorderStroke(
+            null, null, null, widths);
+        this.setBorder(new Border(stroke));
         Tooltip sizeTooltip = new Tooltip("Enter the width or height in pixels for the slides.");
         this.setTooltip(sizeTooltip);
         this.addEventFilter(KeyEvent.KEY_TYPED,

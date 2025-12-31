@@ -268,12 +268,24 @@ public class TitleAndSortStage extends FlexiStage {
             int width = Integer.parseInt(widthText);
             int height = Integer.parseInt(heightText);
             SlideSize slideSize = defaultData.getSlideSize();
-            if ((width == slideSize.getWidth() || width < SlideSize.MIN_SIZE)
-                    && (height == slideSize.getHeight() || height < SlideSize.MIN_SIZE)) {
-                saveSizesButton.setDisable(true);
-            } else {
-                saveSizesButton.setDisable(false);
+            boolean disableButton = false;
+            if (width == slideSize.getWidth()
+                && height == slideSize.getHeight()) {
+                disableButton = true;
             }
+            if (width < SlideSize.MIN_SIZE) {
+                widthField.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
+                disableButton = true;
+            } else {
+                widthField.setStyle("-fx-border-color: transparent; -fx-border-width: 3px;");
+            }
+            if (height < SlideSize.MIN_SIZE) {
+                heightField.setStyle("-fx-border-color: red; -fx-border-width: 3px;");
+                disableButton = true;
+            } else {
+                heightField.setStyle("-fx-border-color: transparent; -fx-border-width: 3px;");
+            }
+            saveSizesButton.setDisable(disableButton);
         };
         return listener;
     }
