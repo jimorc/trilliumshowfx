@@ -1,6 +1,7 @@
 package com.github.jimorc.trilliumshowfx;
 
 import javafx.beans.InvalidationListener;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
@@ -17,7 +18,7 @@ public class SizeTextField extends TextField {
      * Constructs a SizeTextField with the specified value as text.
      * @param size the size to set the text field to
      */
-    public SizeTextField(int size) {
+    public SizeTextField(int size, ChangeListener<String> sizeFieldChangeListener) {
         super(Integer.toString(size));
         this.setPrefColumnCount(maxDigits);
         this.setPrefWidth(textFieldMaxWidth);
@@ -29,7 +30,8 @@ public class SizeTextField extends TextField {
             e -> {
                 filterSizeFieldKeyInput(e);
             });
-        this.focusedProperty().addListener(sizeFieldListener);
+        this.focusedProperty().addListener(sizeFieldListener());
+        this.textProperty().addListener(sizeFieldChangeListener);
     }
 
     private void filterSizeFieldKeyInput(KeyEvent e) {
@@ -47,13 +49,16 @@ public class SizeTextField extends TextField {
         }
     }
 
-    private InvalidationListener sizeFieldListener = _ -> {
-        String text = this.getText();
-        int value = Integer.parseInt(text);
-        if (value < SlideSize.MIN_SIZE) {
-            this.setText(Integer.toString(SlideSize.MIN_SIZE));
-        }
-        // don't need to check for max size because of maxDigits limit
-        this.positionCaret(this.getText().length());
-    };
+    private InvalidationListener sizeFieldListener() {
+        InvalidationListener listener = observable -> {
+            String text = this.getText();
+            int value = Integer.parseInt(text);
+            if (value < SlideSize.MIN_SIZE) {
+                this.setText(Integer.toString(SlideSize.MIN_SIZE));
+            }
+            // don't need to check for max size because of maxDigits limit
+            this.positionCaret(this.getText().length());
+        };
+        return listener;
+    }
 }

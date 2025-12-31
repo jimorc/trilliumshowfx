@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-//import org.assertj.core.internal.bytebuddy.agent.builder.AgentBuilder.CircularityLock.Default;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -45,7 +44,6 @@ public class DefaultDataTests {
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
-//        jsonFile = new File("nonexistent.json");
         if (jsonFile.exists()) {
             jsonFile.delete();
         }
@@ -55,7 +53,7 @@ public class DefaultDataTests {
     public void testConstructorInvalidJson() {
         final int width = 1400;
         final int height = 1050;
-        String invalidJson = "{ invalid json ";;
+        String invalidJson = "{ invalid json ";
         DefaultData data = new DefaultData(invalidJson);
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());

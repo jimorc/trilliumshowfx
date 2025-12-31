@@ -84,6 +84,14 @@ public class DefaultData {
     }
 
     /**
+     * Set the SlideSize in the defaults.
+     * @param slideSize The SlideSize to set.
+     */
+    public void setSlideSize(SlideSize slideSize) {
+        jsonObject.put("slide_size", slideSize.toJson());
+    }
+
+    /**
      * Save the current defaults back to the JSON file.
      */
     public void saveDefaults() {

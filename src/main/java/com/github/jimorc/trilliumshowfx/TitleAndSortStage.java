@@ -1,6 +1,7 @@
 package com.github.jimorc.trilliumshowfx;
 
 import java.io.File;
+import javafx.beans.value.ChangeListener;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -11,6 +12,8 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -25,6 +28,7 @@ public class TitleAndSortStage extends FlexiStage {
     private SortOrder sortOrder = SortOrder.AsIs;
     private SizeTextField widthField;
     private SizeTextField heightField;
+    private Button saveSizesButton;
     private TextArea startTitleArea;
     private TextArea endTitleArea;
     private ToggleGroup sortGroup;
@@ -108,21 +112,34 @@ public class TitleAndSortStage extends FlexiStage {
         Label sizeLabel = new Label("Slide Size");
         sizeLabel.setFont(labelFont);
         VBox.setMargin(sizeLabel, insets);
-
+        ChangeListener<String> createS = createSizeFieldChangeListener();
         SlideSize slideSize = defaultData.getSlideSize();
-        widthField = new SizeTextField(slideSize.getWidth());
-        heightField = new SizeTextField(slideSize.getHeight());
+        widthField = new SizeTextField(slideSize.getWidth(), createS);
+        heightField = new SizeTextField(slideSize.getHeight(), createS);
         Label x = new Label(" x ");
         Label pixels = new Label(" pixels");
-        HBox sizeHBox = new HBox();
-        sizeHBox.getChildren().addAll(widthField, x, heightField, pixels);
-        sizeHBox.setAlignment(Pos.CENTER_LEFT);
-        VBox.setMargin(sizeHBox, insets);
+        saveSizesButton = createSaveSizesButton();
+        saveSizesButton.setDisable(true);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox sizePane = new HBox(spacing);
+        sizePane.getChildren().addAll(widthField, x, heightField, pixels, spacer, saveSizesButton);
+        VBox.setMargin(sizePane, insets);
         VBox sizeBox = new VBox();
-        sizeBox.getChildren().addAll(sizeLabel, sizeHBox
-
-        );
+        sizeBox.getChildren().addAll(sizeLabel, sizePane);
         return sizeBox;
+    }
+
+    private Button createSaveSizesButton() {
+        Button button = new Button("Save Slide Size as Default");
+        button.setOnAction(_ -> {
+            int width = Integer.parseInt(widthField.getText());
+            int height = Integer.parseInt(heightField.getText());
+            defaultData.setSlideSize(new SlideSize(width, height));
+            defaultData.saveDefaults();
+            button.setDisable(true);
+        });
+        return button;
     }
 
     private HBox createButtonBox(final int buttonTopMargin, final int buttonRightMargin, final int buttonBottomMargin,
@@ -242,5 +259,22 @@ public class TitleAndSortStage extends FlexiStage {
         button.setToggleGroup(group);
         button.setUserData(order);
         return button;
+    }
+
+    private ChangeListener<String> createSizeFieldChangeListener() {
+        ChangeListener<String> listener = (observable, oldValue, newValue) -> {
+            String widthText = widthField.getText();
+            String heightText = heightField.getText();
+            int width = Integer.parseInt(widthText);
+            int height = Integer.parseInt(heightText);
+            SlideSize slideSize = defaultData.getSlideSize();
+            if ((width == slideSize.getWidth() || width < SlideSize.MIN_SIZE)
+                    && (height == slideSize.getHeight() || height < SlideSize.MIN_SIZE)) {
+                saveSizesButton.setDisable(true);
+            } else {
+                saveSizesButton.setDisable(false);
+            }
+        };
+        return listener;
     }
 }
