@@ -35,7 +35,9 @@ public class SizeTextField extends TextField {
         BorderStroke stroke = new BorderStroke(
             null, null, null, widths);
         this.setBorder(new Border(stroke));
-        Tooltip sizeTooltip = new Tooltip("Enter the width or height in pixels for the slides.");
+        Tooltip sizeTooltip = new Tooltip("Enter the width or height in pixels for the slides."
+            + "\nValues must be between " + Integer.toString(SlideSize.MIN_SIZE)
+            + " and " + Integer.toString(SlideSize.MAX_SIZE));
         this.setTooltip(sizeTooltip);
         this.addEventFilter(KeyEvent.KEY_TYPED,
             e -> {
