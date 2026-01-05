@@ -6,9 +6,11 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextArea;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
@@ -29,6 +31,7 @@ public class TitleAndSortStage extends FlexiStage {
     private SizeTextField widthField;
     private SizeTextField heightField;
     private Button saveSizesButton;
+    private CheckBox createStartEndCheckBox;
     private TextArea startTitleArea;
     private TextArea endTitleArea;
     private ToggleGroup sortGroup;
@@ -86,11 +89,7 @@ public class TitleAndSortStage extends FlexiStage {
         Insets vBoxInsets = new Insets(topMargin, rightMargin, bottomMargin, leftMargin);
         Insets tLabelInsets = new Insets(tLabelMarginTop, rightMargin, bottomMargin, leftMargin);
         VBox sizeBox = createSizeBox(labelFont, vBoxInsets);
-        Label startLabel = createStartEndLabel("Start Image Text", labelFont, tLabelInsets);
-        startTitleArea = createTextArea("Start", vBoxInsets);
-        Label endLabel = createStartEndLabel("End Image Text", labelFont, tLabelInsets);
-        endTitleArea = createTextArea("End", vBoxInsets);
-
+        TitledPane startEndPane = createStartEndSlidesPane(labelFont, tLabelInsets, vBoxInsets);
         Label sortLabel = createSortLabel(labelFont, vBoxInsets);
         sortGroup = new ToggleGroup();
         createNoneButton(vBoxInsets);
@@ -102,10 +101,32 @@ public class TitleAndSortStage extends FlexiStage {
         HBox buttonBox = createButtonBox(buttonTopMargin, buttonRightMargin, buttonBottomMargin, buttonLeftMargin);
 
         VBox vbox = new VBox(spacing);
-        vbox.getChildren().addAll(sizeBox, startLabel, startTitleArea, endLabel, endTitleArea, sortLabel,
+        vbox.getChildren().addAll(sizeBox, startEndPane, sortLabel,
             noneButton, alphaFullButton, alphaLastFirstButton, alphaFullRevButton,
             alphaLastFirstRevButton, buttonBox);
         return vbox;
+    }
+
+    private TitledPane createStartEndSlidesPane(final Font labelFont,
+            final Insets labelInsets, final Insets boxInsets) {
+        HBox startEndCheck = createCreateStartEndSlidesBox();
+        Label startLabel = createStartEndLabel("Start Image Text", labelFont, labelInsets);
+        startTitleArea = createTextArea("Start", boxInsets);
+        Label endLabel = createStartEndLabel("End Image Text", labelFont, labelInsets);
+        endTitleArea = createTextArea("End", boxInsets);
+        VBox box = new VBox(startEndCheck, startLabel, startTitleArea, endLabel, endTitleArea);
+        VBox.setMargin(startEndCheck, labelInsets);
+        TitledPane startEndPane = new TitledPane();
+        startEndPane.setText("Start and End Slides");
+        startEndPane.setContent(box);
+        startEndPane.setCollapsible(false);
+        return startEndPane;
+    }
+
+    private HBox createCreateStartEndSlidesBox() {
+        createStartEndCheckBox = new CheckBox("Create Start and End Slides");
+        HBox box = new HBox(createStartEndCheckBox);
+        return box;
     }
 
     private VBox createSizeBox(final Font labelFont, final Insets insets) {
