@@ -134,6 +134,7 @@ public class TitleAndSortStage extends FlexiStage {
     private VBox createSizeBox(final Font labelFont, final Insets insets) {
         Label sizeLabel = new Label("Slide Size");
         sizeLabel.setFont(labelFont);
+        sizeLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px");
         VBox.setMargin(sizeLabel, insets);
         ChangeListener<String> createS = createSizeFieldChangeListener();
         SlideSize slideSize = defaultData.getSlideSize();
