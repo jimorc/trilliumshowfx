@@ -92,6 +92,32 @@ public class DefaultData {
     }
 
     /**
+     * Get createStartEndSlides from the defaults.
+     * @return true if createStartEndSlides value is "true", or value does
+     * not exist in the defaults. False otherwise.
+     */
+    public boolean getCreateStartEndSlides() {
+        String ses = jsonObject.optString("createStartEndSlides");
+        if (ses != "") {
+            return (ses == "true") ? true : false;
+        } else {
+            jsonObject.put("createStartEndSlides", "true");
+            if (filePath != null) {
+                saveDefaults();
+            }
+            return true;
+        }
+    }
+
+    /**
+     * Set the createStartEndSlides value in the defaults.
+     * @param set true to set value to "true". Otherwise value is set to "false".
+     */
+    public void setCreateStartEndSlides(boolean set) {
+        jsonObject.put("createStartEndSlides", (set) ? "true" : "false");
+    }
+
+    /**
      * Save the current defaults back to the JSON file.
      */
     public void saveDefaults() {
@@ -110,6 +136,9 @@ public class DefaultData {
                 return;
             }
         }
+        // Make sure all data exists
+        this.getSlideSize();
+        this.getCreateStartEndSlides();
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(filePath);

@@ -7,6 +7,8 @@ import java.io.IOException;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 
 /**
@@ -17,11 +19,13 @@ public class DefaultDataTests {
     public void testConstructorValidString() {
         final int width = 1920;
         final int height = 1080;
-        String jsonContent = "{ \"slide_size\": { \"width\": 1920, \"height\": 1080 } }";
+        String jsonContent = "{ \"slide_size\": { \"width\": 1920, \"height\": 1080 },"
+            + "\"createStartEndSlides\": \"true\" }";
         DefaultData data = new DefaultData(jsonContent);
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
+        assertFalse(data.getCreateStartEndSlides());
     }
 
     @Test
@@ -33,6 +37,7 @@ public class DefaultDataTests {
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
+        assertTrue(data.getCreateStartEndSlides());
     }
 
     @Test
@@ -42,8 +47,10 @@ public class DefaultDataTests {
         File jsonFile = new File("testing/data/nonexistent.json");
         DefaultData data = new DefaultData(jsonFile);
         SlideSize slideSize = data.getSlideSize();
+        boolean ses = data.getCreateStartEndSlides();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
+        assertTrue(ses);
         if (jsonFile.exists()) {
             jsonFile.delete();
         }
@@ -58,13 +65,14 @@ public class DefaultDataTests {
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
+        assertTrue(data.getCreateStartEndSlides());
     }
 
     @Test
     public void testSaveDefaults() {
         File jsonFile = new File("temp_defaults.json");
         DefaultData data = new DefaultData(jsonFile);
-        // force change to trigger save
+        // force changes to trigger save
         data.getSlideSize();
         try (BufferedReader jsonFileReader = new BufferedReader(
                 new FileReader(jsonFile.getAbsolutePath()))) {
@@ -74,8 +82,8 @@ public class DefaultDataTests {
                 sb.append(line);
             }
             String fileContent = sb.toString();
-            String expectedContent = "{\"slide_size\":{\"width\":1400,\"height\":1050}}";
-            assertEquals(expectedContent, fileContent);
+            assertTrue(fileContent.contains("createStartEndSlides\":\"true\""));
+            assertTrue(fileContent.contains("\"slide_size\":{\"width\":1400,\"height\":1050}"));
         } catch (IOException e) {
             fail(e.getCause().toString());
         }
