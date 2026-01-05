@@ -117,7 +117,9 @@ public class TitleAndSortStage extends FlexiStage {
         VBox box = new VBox(startEndCheck, startLabel, startTitleArea, endLabel, endTitleArea);
         VBox.setMargin(startEndCheck, labelInsets);
         TitledPane startEndPane = new TitledPane();
-        startEndPane.setText("Start and End Slides");
+        Label paneLabel = new Label("Start and End Slides");
+        paneLabel.setStyle("-fx-font-weight: bold; -fx-font-size: 16px");
+        startEndPane.setGraphic(paneLabel);
         startEndPane.setContent(box);
         startEndPane.setCollapsible(false);
         return startEndPane;
