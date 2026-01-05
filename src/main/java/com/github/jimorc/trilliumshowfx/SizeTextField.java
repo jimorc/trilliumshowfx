@@ -1,5 +1,6 @@
 package com.github.jimorc.trilliumshowfx;
 
+import javafx.application.Platform;
 import javafx.beans.InvalidationListener;
 import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
@@ -44,6 +45,15 @@ public class SizeTextField extends TextField {
                 filterSizeFieldKeyInput(e);
             });
         this.focusedProperty().addListener(sizeFieldListener());
+        this.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
+            if (isNowFocused) {
+                Platform.runLater(() -> {
+                    this.selectRange(0, 0);
+                    this.positionCaret(this.getText().length());
+                });
+
+            }
+        });
         this.textProperty().addListener(sizeFieldChangeListener);
     }
 
@@ -70,7 +80,6 @@ public class SizeTextField extends TextField {
                 this.setText(Integer.toString(SlideSize.MIN_SIZE));
             }
             // don't need to check for max size because of maxDigits limit
-            this.positionCaret(this.getText().length());
         };
         return listener;
     }
