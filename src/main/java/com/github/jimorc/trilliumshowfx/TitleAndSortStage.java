@@ -77,6 +77,8 @@ public class TitleAndSortStage extends FlexiStage {
     private VBox createBox() {
         final int fontSize = 14;
         final int tLabelMarginTop = 5;
+        final int sizeLabelMarginTop = 5;
+        final int sizeLabelMarginBottom = 5;
         final int topMargin = 0;
         final int rightMargin = 10;
         final int bottomMargin = 0;
@@ -88,7 +90,9 @@ public class TitleAndSortStage extends FlexiStage {
         final Font labelFont = Font.font("Arial", FontWeight.BOLD, fontSize);
         Insets vBoxInsets = new Insets(topMargin, rightMargin, bottomMargin, leftMargin);
         Insets tLabelInsets = new Insets(tLabelMarginTop, rightMargin, bottomMargin, leftMargin);
-        VBox sizeBox = createSizeBox(labelFont, vBoxInsets);
+        Insets sizeInsets = new Insets(sizeLabelMarginTop, rightMargin, sizeLabelMarginBottom,
+            leftMargin);
+        VBox sizeBox = createSizeBox(labelFont, sizeInsets);
         TitledPane startEndPane = createStartEndSlidesPane(labelFont, tLabelInsets, vBoxInsets);
         Label sortLabel = createSortLabel(labelFont, vBoxInsets);
         sortGroup = new ToggleGroup();
