@@ -32,6 +32,7 @@ public class TitleAndSortStage extends FlexiStage {
     private SizeTextField heightField;
     private Button saveSizesButton;
     private CheckBox createStartEndCheckBox;
+    private Button saveStartEndSliderButton;
     private TextArea startTitleArea;
     private TextArea endTitleArea;
     private ToggleGroup sortGroup;
@@ -133,8 +134,27 @@ public class TitleAndSortStage extends FlexiStage {
     private HBox createCreateStartEndSlidesBox() {
         createStartEndCheckBox = new CheckBox("Create Start and End Slides");
         createStartEndCheckBox.setSelected(defaultData.getCreateStartEndSlides());
-        HBox box = new HBox(createStartEndCheckBox);
+        createStartEndCheckBox.setOnAction(_ -> {
+            boolean sameAsDefault = createStartEndCheckBox.isSelected() ==
+                defaultData.getCreateStartEndSlides();
+            saveStartEndSliderButton.setDisable(sameAsDefault);
+    });
+        saveStartEndSliderButton = createSaveStartEndSliderButton();
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox box = new HBox(createStartEndCheckBox, spacer, saveStartEndSliderButton);
         return box;
+    }
+
+    private Button createSaveStartEndSliderButton() {
+        Button button = new Button("Save Create Slides as Default");
+        button.setDisable(true);
+        button.setOnAction(_ -> {
+            defaultData.setCreateStartEndSlides(createStartEndCheckBox.isSelected());
+            defaultData.saveDefaults();
+            button.setDisable(true);
+            });
+        return button;
     }
 
     private VBox createSizeBox(final Font labelFont, final Insets insets) {
