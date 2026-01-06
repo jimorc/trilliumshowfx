@@ -112,14 +112,15 @@ public class BuilderGUI extends Application {
     private OutputCSV generateOutputCSV(InputCSV csv, TitleAndSortData data) {
         Logger.trace("In BuilderGUI.generateOutputCSV");
         OutputCSV out = new OutputCSV();
+        FlexiBean titleBean = new FlexiBean();
         try {
             String dir = csv.getFileDir();
             String titleFileName = dir + "/start.jpg";
-            TitleImage.generateTitleImage(data.getSlideSize(), data.getStartTitle(), titleFileName);
-            FlexiBean titleBean = new FlexiBean();
-            titleBean.setFilename("start.jpg");
-            out.appendBean(titleBean);
-
+            if (data.getCreateStartEndSlides()) {
+                TitleImage.generateTitleImage(data.getSlideSize(), data.getStartTitle(), titleFileName);
+                titleBean.setFilename("start.jpg");
+                out.appendBean(titleBean);
+            }
             csv.getBeans().sort(data.getOrder());
             ArrayList<String> fullNames = csv.getBeans().getSortedFullNames();
             for (String name : fullNames) {
@@ -138,11 +139,13 @@ public class BuilderGUI extends Application {
                         "Appended bean for ", name, ": ", bean.toString()));
                 }
             }
-            titleFileName = dir + "/end.jpg";
-            TitleImage.generateTitleImage(data.getSlideSize(), data.getEndTitle(), titleFileName);
-            titleBean = new FlexiBean();
-            titleBean.setFilename("end.jpg");
-            out.appendBean(titleBean);
+            if (data.getCreateStartEndSlides()) {
+                titleFileName = dir + "/end.jpg";
+                TitleImage.generateTitleImage(data.getSlideSize(), data.getEndTitle(), titleFileName);
+                titleBean = new FlexiBean();
+                titleBean.setFilename("end.jpg");
+                out.appendBean(titleBean);
+            }
         } catch (CSVException e) {
             Logger.error("CSVException thrown in generateOutputCSV: ", e);
             handlePersonException(e);
