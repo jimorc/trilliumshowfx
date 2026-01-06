@@ -2,6 +2,7 @@ package com.github.jimorc.trilliumshowfx;
 
 import java.io.File;
 import javafx.beans.value.ChangeListener;
+import javafx.event.Event;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -128,22 +129,31 @@ public class TitleAndSortStage extends FlexiStage {
         startEndPane.setGraphic(paneLabel);
         startEndPane.setContent(box);
         startEndPane.setCollapsible(false);
+        // must call here to enable/disable widgets correctly when first displayed.
+        saveStartEndSliderButtonAction(null);
         return startEndPane;
     }
 
     private HBox createCreateStartEndSlidesBox() {
         createStartEndCheckBox = new CheckBox("Create Start and End Slides");
         createStartEndCheckBox.setSelected(defaultData.getCreateStartEndSlides());
-        createStartEndCheckBox.setOnAction(_ -> {
-            boolean sameAsDefault = createStartEndCheckBox.isSelected() ==
-                defaultData.getCreateStartEndSlides();
-            saveStartEndSliderButton.setDisable(sameAsDefault);
-    });
+        createStartEndCheckBox.setOnAction(e -> {
+            saveStartEndSliderButtonAction(e);
+        });
         saveStartEndSliderButton = createSaveStartEndSliderButton();
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox box = new HBox(createStartEndCheckBox, spacer, saveStartEndSliderButton);
         return box;
+    }
+
+    private void saveStartEndSliderButtonAction(Event e) {
+        boolean checked = createStartEndCheckBox.isSelected();
+        startTitleArea.setDisable(!checked);
+        endTitleArea.setDisable(!checked);
+        boolean sameAsDefault = createStartEndCheckBox.isSelected()
+            == defaultData.getCreateStartEndSlides();
+        saveStartEndSliderButton.setDisable(sameAsDefault);
     }
 
     private Button createSaveStartEndSliderButton() {
@@ -153,7 +163,7 @@ public class TitleAndSortStage extends FlexiStage {
             defaultData.setCreateStartEndSlides(createStartEndCheckBox.isSelected());
             defaultData.saveDefaults();
             button.setDisable(true);
-            });
+        });
         return button;
     }
 
