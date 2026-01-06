@@ -98,8 +98,8 @@ public class DefaultData {
      */
     public boolean getCreateStartEndSlides() {
         String ses = jsonObject.optString("createStartEndSlides");
-        if (ses != "") {
-            return (ses == "true") ? true : false;
+        if (!"".equals(ses)) {
+            return ("true".equals(ses)) ? true : false;
         } else {
             jsonObject.put("createStartEndSlides", "true");
             if (filePath != null) {
@@ -114,7 +114,7 @@ public class DefaultData {
      * @param set true to set value to "true". Otherwise value is set to "false".
      */
     public void setCreateStartEndSlides(boolean set) {
-        jsonObject.put("createStartEndSlides", (set) ? "true" : "false");
+        jsonObject.put("createStartEndSlides", set ? "true" : "false");
     }
 
     /**

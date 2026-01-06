@@ -69,6 +69,7 @@ public class TitleAndSortStage extends FlexiStage {
         int slideHeight = Integer.parseInt(heightField.getText());
         SlideSize slideSize = new SlideSize(slideWidth, slideHeight);
         TitleAndSortData data = new TitleAndSortData(slideSize,
+            createStartEndCheckBox.isSelected(),
             startTitleArea.getText(),
             endTitleArea.getText(), sortOrder);
         return data;
@@ -131,6 +132,7 @@ public class TitleAndSortStage extends FlexiStage {
 
     private HBox createCreateStartEndSlidesBox() {
         createStartEndCheckBox = new CheckBox("Create Start and End Slides");
+        createStartEndCheckBox.setSelected(defaultData.getCreateStartEndSlides());
         HBox box = new HBox(createStartEndCheckBox);
         return box;
     }
