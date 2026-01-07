@@ -85,6 +85,7 @@ public class DefaultData {
 
     /**
      * Set the SlideSize in the defaults.
+     * You should call `saveDefaults()` after calling this method.
      * @param slideSize The SlideSize to set.
      */
     public void setSlideSize(SlideSize slideSize) {
@@ -111,10 +112,63 @@ public class DefaultData {
 
     /**
      * Set the createStartEndSlides value in the defaults.
+     * You should call `saveDefaults()` after calling this method.
      * @param set true to set value to "true". Otherwise value is set to "false".
      */
     public void setCreateStartEndSlides(boolean set) {
         jsonObject.put("createStartEndSlides", set ? "true" : "false");
+    }
+
+    /**
+     * Get the start title from the defaults.
+     * @return The default start title, or empty string if not set.
+     */
+    public String getStartTitle() {
+        String startTitle = jsonObject.optString("startTitle", "XXX");
+        if (!"XXX".equals(startTitle)) {
+            return startTitle;
+        } else {
+            jsonObject.put("startTitle", "");
+            if (filePath != null) {
+                saveDefaults();
+            }
+            return "";
+        }
+    }
+
+    /**
+     * Set the start title in the defaults.
+     * You should call `saveDefaults()` after calling this method.
+     * @param title The title to set.
+     */
+    public void setStartTitle(String title) {
+        jsonObject.put("startTitle", title);
+    }
+
+    /**
+     * Get the end title from the defaults.
+     * @return The default end title, or empty string if not set.
+     */
+    public String getEndTitle() {
+        String endTitle = jsonObject.optString("endTitle", "XXX");
+        if (!"XXX".equals(endTitle)) {
+            return endTitle;
+        } else {
+            jsonObject.put("endTitle", "");
+            if (filePath != null) {
+                saveDefaults();
+            }
+            return "";
+        }
+    }
+
+    /**
+     * Set the end title in the defaults.
+     * You should call `saveDefaults()` after calling this method.
+     * @param title The title to set.
+     */
+    public void setEndTitle(String title) {
+        jsonObject.put("endTitle", title);
     }
 
     /**

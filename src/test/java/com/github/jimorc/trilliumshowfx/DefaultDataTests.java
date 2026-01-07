@@ -19,12 +19,14 @@ public class DefaultDataTests {
         final int width = 1920;
         final int height = 1080;
         String jsonContent = "{ \"slide_size\": { \"width\": 1920, \"height\": 1080 },"
-            + "\"createStartEndSlides\": \"true\" }";
+            + "\"createStartEndSlides\": \"true\", \"startTitle\": \"start\", \"endTitle\": \"end\" }";
         DefaultData data = new DefaultData(jsonContent);
         SlideSize slideSize = data.getSlideSize();
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
         assertTrue(data.getCreateStartEndSlides());
+        assertEquals("start", data.getStartTitle());
+        assertEquals("end", data.getEndTitle());
     }
 
     @Test
@@ -37,6 +39,8 @@ public class DefaultDataTests {
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
         assertTrue(data.getCreateStartEndSlides());
+        assertEquals("start title", data.getStartTitle());
+        assertEquals("end title", data.getEndTitle());
     }
 
     @Test
@@ -50,6 +54,8 @@ public class DefaultDataTests {
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
         assertTrue(ses);
+        assertEquals("", data.getStartTitle());
+        assertEquals("", data.getEndTitle());
         if (jsonFile.exists()) {
             jsonFile.delete();
         }
@@ -65,6 +71,8 @@ public class DefaultDataTests {
         assertEquals(width, slideSize.getWidth());
         assertEquals(height, slideSize.getHeight());
         assertTrue(data.getCreateStartEndSlides());
+        assertEquals("", data.getStartTitle());
+        assertEquals("", data.getEndTitle());
     }
 
     @Test
@@ -73,6 +81,9 @@ public class DefaultDataTests {
         DefaultData data = new DefaultData(jsonFile);
         // force changes to trigger save
         data.getSlideSize();
+        data.getCreateStartEndSlides();
+        data.getStartTitle();
+        data.getEndTitle();
         try (BufferedReader jsonFileReader = new BufferedReader(
                 new FileReader(jsonFile.getAbsolutePath()))) {
             String line;
@@ -83,6 +94,8 @@ public class DefaultDataTests {
             String fileContent = sb.toString();
             assertTrue(fileContent.contains("createStartEndSlides\":\"true\""));
             assertTrue(fileContent.contains("\"slide_size\":{\"width\":1400,\"height\":1050}"));
+            assertTrue(fileContent.contains("\"startTitle\":\"\""));
+            assertTrue(fileContent.contains("\"endTitle\":\"\""));
         } catch (IOException e) {
             fail(e.getCause().toString());
         }

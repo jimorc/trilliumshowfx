@@ -3,5 +3,7 @@
         "width": 1024,
         "height": 768
     },
-    "createStartEndSlides": true
+    "createStartEndSlides": true,
+    "startTitle": "start title",
+    "endTitle": "end title"
 }
