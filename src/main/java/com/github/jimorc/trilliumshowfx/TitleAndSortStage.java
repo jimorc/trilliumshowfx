@@ -119,9 +119,11 @@ public class TitleAndSortStage extends FlexiStage {
         HBox startEndCheck = createCreateStartEndSlidesBox();
         Label startLabel = createStartEndLabel("Start Image Text", labelFont, labelInsets);
         startTitleArea = createTextArea("Start", boxInsets);
+        HBox startTitleBox = createTextBox(startTitleArea, boxInsets);
         Label endLabel = createStartEndLabel("End Image Text", labelFont, labelInsets);
         endTitleArea = createTextArea("End", boxInsets);
-        VBox box = new VBox(startEndCheck, startLabel, startTitleArea, endLabel, endTitleArea);
+        HBox endTitleBox = createTextBox(endTitleArea, boxInsets);
+        VBox box = new VBox(startEndCheck, startLabel, startTitleBox, endLabel, endTitleBox);
         VBox.setMargin(startEndCheck, labelInsets);
         TitledPane startEndPane = new TitledPane();
         Label paneLabel = new Label("Start and End Slides");
@@ -314,6 +316,13 @@ public class TitleAndSortStage extends FlexiStage {
         textArea.setTooltip(tTooltip);
         VBox.setMargin(textArea, insets);
         return textArea;
+    }
+
+    private HBox createTextBox(TextArea tArea, Insets insets) {
+        HBox box = new HBox(spacing);
+        box.getChildren().addAll(tArea);
+        VBox.setMargin(box, insets);
+        return box;
     }
 
     private RadioButton createRadioButton(String text, ToggleGroup group, SortOrder order) {
