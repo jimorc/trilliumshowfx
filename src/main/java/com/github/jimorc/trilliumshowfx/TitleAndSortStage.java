@@ -333,6 +333,7 @@ public class TitleAndSortStage extends FlexiStage {
             defaultData.saveDefaults();
             saveButton.setDisable(true);
         });
+        saveButton.setDisable(true);
         HBox box = new HBox(spacing);
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
