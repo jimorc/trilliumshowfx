@@ -118,10 +118,12 @@ public class TitleAndSortStage extends FlexiStage {
             final Insets labelInsets, final Insets boxInsets) {
         HBox startEndCheck = createCreateStartEndSlidesBox();
         Label startLabel = createStartEndLabel("Start Image Text", labelFont, labelInsets);
-        startTitleArea = createTextArea("Start", boxInsets);
+        String defaultStartTitle = defaultData.getStartTitle();
+        startTitleArea = createTextArea("Start", defaultStartTitle, boxInsets);
         HBox startTitleBox = createTextBox(startTitleArea, boxInsets);
         Label endLabel = createStartEndLabel("End Image Text", labelFont, labelInsets);
-        endTitleArea = createTextArea("End", boxInsets);
+        String defaultEndTitle = defaultData.getEndTitle();
+        endTitleArea = createTextArea("End", defaultEndTitle, boxInsets);
         HBox endTitleBox = createTextBox(endTitleArea, boxInsets);
         VBox box = new VBox(startEndCheck, startLabel, startTitleBox, endLabel, endTitleBox);
         VBox.setMargin(startEndCheck, labelInsets);
@@ -302,10 +304,11 @@ public class TitleAndSortStage extends FlexiStage {
         VBox.setMargin(alphaFullRevButton, insets);
     }
 
-    private TextArea createTextArea(String startEnd, Insets insets) {
+    private TextArea createTextArea(String startEnd, String defaultText, Insets insets) {
         final int prefColumnCount = 50;
         final int prefRowCount = 2;
         TextArea textArea = new TextArea();
+        textArea.setText(defaultText);
         textArea.setPromptText("Enter title text here");
         textArea.setPrefColumnCount(prefColumnCount);
         textArea.setPrefRowCount(prefRowCount);
@@ -319,8 +322,21 @@ public class TitleAndSortStage extends FlexiStage {
     }
 
     private HBox createTextBox(TextArea tArea, Insets insets) {
+        Button saveButton = new Button("Save as Default");
+        saveButton.setOnAction(_ -> {
+            String text = tArea.getText();
+            if (startTitleArea == tArea) {
+                defaultData.setStartTitle(text);
+            } else {
+                defaultData.setEndTitle(text);
+            }
+            defaultData.saveDefaults();
+            saveButton.setDisable(true);
+        });
         HBox box = new HBox(spacing);
-        box.getChildren().addAll(tArea);
+        Region spacer = new Region();
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        box.getChildren().addAll(tArea, spacer, saveButton);
         VBox.setMargin(box, insets);
         return box;
     }
