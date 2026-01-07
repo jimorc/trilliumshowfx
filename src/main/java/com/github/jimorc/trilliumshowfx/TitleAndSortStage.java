@@ -140,6 +140,8 @@ public class TitleAndSortStage extends FlexiStage {
         createStartEndCheckBox.setOnAction(e -> {
             saveStartEndSliderButtonAction(e);
         });
+        Tooltip tooltip = new Tooltip("Check this to create start and end slides");
+        createStartEndCheckBox.setTooltip(tooltip);
         saveStartEndSliderButton = createSaveStartEndSliderButton();
         Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
